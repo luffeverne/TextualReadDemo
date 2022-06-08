@@ -1,5 +1,7 @@
 package com.example.textualreaddemo.basebean.newsdata;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 import java.util.Date;
 
@@ -21,6 +23,8 @@ public class NewsListData {
     private List<String> imgList;
     private String source;
     private String newsId;
+
+    @SerializedName("digest")
     private String digest;
     private String postTime;
     private String videoList;
