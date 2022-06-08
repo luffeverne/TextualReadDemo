@@ -4,6 +4,7 @@ package com.example.textualreaddemo.basebean.newsdata;
  * 这个类表示每一条新闻详情页内所需要的数据
  * 更改时间：2022-6-7
  * @author houdeng
+
  */
 public class NewsDetailsBean {
 

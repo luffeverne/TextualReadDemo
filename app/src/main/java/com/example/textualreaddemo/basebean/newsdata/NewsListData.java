@@ -7,6 +7,13 @@ import java.util.Date;
  * 这个类表示每一条新闻简讯数据
  * 更改时间：2022-6-7
  * @author houdeng
+ * title	字符串	新闻标题
+ * imgList	字符串	新闻描述图片列表
+ * source	字符串	新闻来源
+ * newsId	字符串	新闻唯一id，后面查询新闻详情需要
+ * digest	字符串	新闻摘要
+ * postTime	字符串	新闻发布时间
+ * videoList	字符串	新闻视频列表
  */
 public class NewsListData {
 

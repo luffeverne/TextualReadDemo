@@ -6,6 +6,13 @@ import java.util.List;
  * 这个类表示每一条新闻详情页所有数据
  * 更改时间：2022-6-7
  * @author houdeng
+ *  * images	字符串	新闻详情图片列表
+ *  * title	字符串	新闻详情标题
+ *  * source	字符串	新闻来源
+ *  * content	字符串	新闻详情内容
+ *  * ptime	字符串	新闻发布时间
+ *  * docid	字符串	新闻唯一id
+ *  * cover	字符串	新闻封面图片
  */
 public class NewsDetailsData {
 

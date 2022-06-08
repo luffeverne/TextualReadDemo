@@ -13,6 +13,7 @@ import java.util.List;
 public class NewsListBean {
 
     private int code;
+    //确认信息
     private String msg;
 
     @SerializedName("data")
