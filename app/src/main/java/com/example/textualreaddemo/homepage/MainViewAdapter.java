@@ -40,4 +40,7 @@ public class MainViewAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return fragments == null ? 0 : fragments.size();
     }
+
+
+
 }
