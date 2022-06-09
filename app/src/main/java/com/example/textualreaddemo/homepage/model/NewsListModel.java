@@ -42,8 +42,7 @@ public class NewsListModel implements INewsListModel{
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        if (newsListBean != null && "数据返回成功!".equals(newsListBean.getMsg())){
-                        if (newsListBean != null){
+                        if (newsListBean != null && "数据返回成功！".equals(newsListBean.getMsg())){
                             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
                             editor.putString("NewsList",responseText);
                             editor.apply();

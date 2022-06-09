@@ -57,8 +57,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        TextView login = this.findViewById(R.id.btn_login);
-        TextView register = this.findViewById(R.id.btn_register);
-        TextView forgetPassword = this.findViewById(R.id.btn_forgetPassword);
+        login = this.findViewById(R.id.btn_login);
+        register = this.findViewById(R.id.btn_register);
+        forgetPassword = this.findViewById(R.id.btn_forgetPassword);
     }
 }

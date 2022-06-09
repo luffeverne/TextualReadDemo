@@ -26,9 +26,8 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 /**
- * 主页登录跳转
+ * 主页
  * 最后更改时间：2022-6-9 13:58
- * @author luffe
  */
 
 public class MainActivity extends AppCompatActivity{
@@ -51,7 +50,5 @@ public class MainActivity extends AppCompatActivity{
         mainView.setCurrentItem(1);
 
     }
-
-
 
 }
