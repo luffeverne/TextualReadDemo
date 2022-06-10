@@ -1,7 +1,5 @@
 package com.example.textualreaddemo.homepage;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -28,6 +26,7 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private Context context;
     private List<NewsListData> mItems;
+    private MyOnItemClickListener mOnItemClickListener;
 
     private final int VIEW_TYPE_PICTURE_TITLE = 1;
     private final int VIEW_TYPE_NO_PICTURE_TITLE = 2;
@@ -73,19 +72,19 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-//        holder.itemView.setTag(mItems.get(position).link);
         if (holder instanceof PictureTitleViewHolder){
             ((PictureTitleViewHolder) holder).itemTitle.setText(mItems.get(position).getTitle());
             String test = mItems.get(position).getImgList().get(0);
             Glide.with(holder.itemView.getContext())
-//                    .load(mItems.get(position).getImgList().get(0))
-                    .load("http://cms-bucket.ws.126.net/2022/0609/84393547p00rd76a3002jc000s600e3c.png")
-                    .transition(withCrossFade())
+                    .load(mItems.get(position).getImgList().get(0))
                     .into(((PictureTitleViewHolder) holder).imageView);
             ((PictureTitleViewHolder) holder).itemText.setText(mItems.get(position).getDigest());
         }else {
             ((TitleViewHolder)holder).itemText.setText(mItems.get(position).getDigest());
             ((TitleViewHolder)holder).itemTitle.setText(mItems.get(position).getTitle());
+        }
+        if (mOnItemClickListener != null){
+            mOnItemClickListener.onItemClick(holder.itemView,position);
         }
     }
 
@@ -123,5 +122,16 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             itemTitle = itemView.findViewById(R.id.news_list_title);
             itemText = itemView.findViewById(R.id.news_list_text);
         }
+    }
+
+    /**
+     * 设置点击事件监听接口
+     */
+    public interface MyOnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(MyOnItemClickListener listener) {
+        this.mOnItemClickListener = listener;
     }
 }

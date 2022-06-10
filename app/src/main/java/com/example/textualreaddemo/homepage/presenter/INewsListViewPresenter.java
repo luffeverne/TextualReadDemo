@@ -1,4 +1,4 @@
-package com.example.textualreaddemo.homepage.model;
+package com.example.textualreaddemo.homepage.presenter;
 
 import android.app.Activity;
 

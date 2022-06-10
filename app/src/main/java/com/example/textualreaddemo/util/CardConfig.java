@@ -10,14 +10,14 @@ import android.util.TypedValue;
  */
 public class CardConfig {
 
-    //屏幕最对同时显示几个item
-    public static int  MAX_SHOW_COUNT=10;
+    //屏幕最对同时显示几个item,为了显示效果，必须设置为单数
+    public static int  MAX_SHOW_COUNT=5;
     //每一级Scale相差0.05f，translation相差7dp左右
     public static  float SCALE_GAP;
     public static int TRANS_V_GAP;
 
     public static void initConfig(Context context){
-        MAX_SHOW_COUNT=10;
+        MAX_SHOW_COUNT=5;
         SCALE_GAP=0.05f;
         TRANS_V_GAP=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 15,

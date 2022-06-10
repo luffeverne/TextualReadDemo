@@ -32,32 +32,32 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         super.onLayoutChildren(recycler, state);
+        //分离回收附属视图
         detachAndScrapAttachedViews(recycler);
         int itemCount = getItemCount();
         int bottomPosition;
-        if(itemCount<5){
+        if (itemCount < 5) {
             bottomPosition = 0;
-        }else{
-            bottomPosition = itemCount-5;
+        } else {
+            bottomPosition = itemCount - 5;
         }
-        for(int i=bottomPosition; i<itemCount; i++){
-            View view=recycler.getViewForPosition(i);
+        for (int i = bottomPosition; i < itemCount; i++) {
+            View view = recycler.getViewForPosition(i);
             addView(view);
-            measureChildWithMargins(view,0,0);
-            int widthSpace=getWidth()-getDecoratedMeasuredWidth(view);
-            int heightSpace=getHeight()-getDecoratedMeasuredHeight(view);
+            measureChildWithMargins(view, 0, 0);
+            int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
+            int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
+            int level = itemCount - i - 1;
             //摆放cardView
             layoutDecorated(view,
-                    widthSpace/2,
-                    heightSpace/2,
-                    widthSpace/2+getDecoratedMeasuredWidth(view),
-                    heightSpace/2+getDecoratedMeasuredHeight(view));
-//                    getHeight()-50);
+                    widthSpace / 2,
+                    getHeight() / 7 ,
+                    widthSpace / 2 + getDecoratedMeasuredWidth(view),
+                    getHeight() - getHeight() / 7 );
             //层叠效果--Scale+TranslationY
-            int level=itemCount-i-1;
             if(level>0){
                 if(level<CardConfig.MAX_SHOW_COUNT){
-                    view.setTranslationY(TRANS_Y_GAP*level);
+                    view.setTranslationY(TRANS_Y_GAP*level*1.5f);
                     view.setScaleX(1-CardConfig.SCALE_GAP*level);
                     view.setScaleY(1-CardConfig.SCALE_GAP*level);
                 }
@@ -66,7 +66,21 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
                 view.setScaleX(1-CardConfig.SCALE_GAP*(level-1));
                 view.setScaleY(1-CardConfig.SCALE_GAP*(level-1));
             }
+//            view.setTranslationY(CardConfig.MAX_SHOW_COUNT*level*5f);
         }
+        //设置前一个新闻card，但实现效果不好
+//        View view = recycler.getViewForPosition(0);
+//        addView(view);
+//        measureChildWithMargins(view, 0, 0);
+//        int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
+//        int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
+//        //摆放cardView
+//        layoutDecorated(view,
+//                widthSpace / 2,
+//                -getDecoratedMeasuredHeight(view)+heightSpace ,
+//                widthSpace / 2 + getDecoratedMeasuredWidth(view),
+//                heightSpace);
+//        view.setTranslationY(1);
     }
 
 

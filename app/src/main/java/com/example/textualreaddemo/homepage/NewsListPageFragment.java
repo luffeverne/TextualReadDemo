@@ -2,6 +2,7 @@ package com.example.textualreaddemo.homepage;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,8 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.textualreaddemo.R;
+import com.example.textualreaddemo.TestActivity;
 import com.example.textualreaddemo.basebean.newsdata.NewsListBean;
-import com.example.textualreaddemo.homepage.model.NewsListViewPresenter;
+import com.example.textualreaddemo.homepage.presenter.NewsListViewPresenter;
 import com.example.textualreaddemo.network.NewsDataUtility;
 import com.example.textualreaddemo.util.CardConfig;
 import com.example.textualreaddemo.util.SwipeCardCallBack;
@@ -46,8 +48,6 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
 
         activity = getActivity();//获取activity对象，充当上下文
 
-        testD();
-
         progressDialog = new ProgressDialog(activity);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
@@ -55,7 +55,7 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
 
         newsListViewPresenter = new NewsListViewPresenter(this);//创建P层对象
 
-        load();
+        testD();
         return view;
     }
 
@@ -90,20 +90,41 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
     }
 
     private void testD(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+        String temp = sp.getString("NewsList",null);
+        //判断数据是否为空
+        if (temp != null){
+            NewsListBean newsListBean = NewsDataUtility.handleNewsListResponse(temp);
+            //判断数据是否正确
+            if (newsListBean != null && "数据返回成功！".equals(newsListBean.getMsg())){
+                SwipeCardLayoutManager swmanamger = new SwipeCardLayoutManager(activity);
+                recyclerView.setLayoutManager(swmanamger);
+                adapter = new NewsListRecyclerViewAdapter(activity);
 
-        SwipeCardLayoutManager swmanamger = new SwipeCardLayoutManager(activity);
-        recyclerView.setLayoutManager(swmanamger);
-        adapter = new NewsListRecyclerViewAdapter(activity);
-        recyclerView.setAdapter(adapter);
-        CardConfig.initConfig(activity);
-        ItemTouchHelper.Callback callback=new SwipeCardCallBack();
-        ItemTouchHelper helper=new ItemTouchHelper(callback);
-        helper.attachToRecyclerView(recyclerView);
-
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-//        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//        adapter = new NewsListRecyclerViewAdapter(activity);
-//        recyclerView.setAdapter(adapter);
+                //设置数据
+                adapter.setData(newsListBean.getData());
+                //设置点击事件
+                adapter.setOnItemClickListener(new NewsListRecyclerViewAdapter.MyOnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(activity, TestActivity.class);
+                                intent.putExtra("newsId",newsListBean.getData().get(position).getNewsId());
+                                activity.startActivity(intent);
+                            }
+                        });
+                    }
+                });
+                recyclerView.setAdapter(adapter);
+                //配置布局信息文件
+                CardConfig.initConfig(activity);
+                //设置触摸效果
+                ItemTouchHelper.Callback callback=new SwipeCardCallBack(newsListBean.getData(),adapter);
+                ItemTouchHelper helper=new ItemTouchHelper(callback);
+                helper.attachToRecyclerView(recyclerView);
+            }
+        }
     }
 }
