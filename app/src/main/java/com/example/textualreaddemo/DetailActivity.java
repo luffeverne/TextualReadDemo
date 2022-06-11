@@ -1,5 +1,6 @@
 package com.example.textualreaddemo;
 
+<<<<<<< HEAD
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
@@ -29,3 +30,9 @@ public class DetailActivity extends AppCompatActivity {
         viewPager2.setAdapter(new DetailContentFragmentAdapter(this,detailContentFragmentList));
     }
 }
+=======
+import android.app.Activity;
+
+public class DetailActivity extends Activity {
+}
+>>>>>>> 063d22fcc6074c2a5c4f154e756453f04f590b33
