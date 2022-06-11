@@ -16,29 +16,36 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TextualReadDemo"
         tools:targetApi="31">
+
         <activity
             android:name=".DetailActivity"
-            android:exported="true" />
+            android:exported="true" >
+
+        </activity>
+
+        <!--登录页-->
         <activity
             android:name=".LoginActivity"
-            android:exported="true"></activity>
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true">
+
+        </activity>
+
+        <!--新闻卡片主页-->
         <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+
         </activity>
 
+        <!--注册页-->
         <activity
-            android:name=".Register"
+            android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
