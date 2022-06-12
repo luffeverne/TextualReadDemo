@@ -1,7 +1,7 @@
 package com.example.textualreaddemo;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
+
 
 import android.graphics.Color;
 import android.os.Build;
@@ -14,8 +14,9 @@ import com.example.textualreaddemo.homepage.NewsListPageFragment;
 import com.example.textualreaddemo.homepage.searchpage.SearchPageFragment;
 
 /**
- * 主页
+ * 主页登录跳转
  * 最后更改时间：2022-6-10 13:58
+ * author: houdeng
  */
 
 public class MainActivity extends AppCompatActivity{
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity{
         adapter.addFragment(new NewsListPageFragment());
         adapter.addFragment(new SearchPageFragment());
         mainView.setCurrentItem(1);
-
     }
 
 }

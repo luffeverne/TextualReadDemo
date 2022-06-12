@@ -3,19 +3,27 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/drawable/card_background.xml" value="0.1" />
-        <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/drawable/cardback.xml" value="0.1" />
-        <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/activity_login.xml" value="0.14855072463768115" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/activity_main.xml" value="0.14266304347826086" />
-        <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/activity_test.xml" value="0.1296875" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/fragment_my_page.xml" value="0.14356884057971014" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/fragment_news_list_page.xml" value="0.14356884057971014" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/fragment_search_page.xml" value="0.14356884057971014" />
+<<<<<<< HEAD
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_concerned_news_list.xml" value="0.13496376811594202" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_concerned_news_list_item.xml" value="0.16666666666666666" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_news_list_no_picture_title_item.xml" value="0.1" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_news_list_picture_title_item.xml" value="0.1" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_seach_title.xml" value="0.13496376811594202" />
+=======
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.1295" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/drawable/ic_baseline_keyboard_arrow_up_24.xml" value="0.1775" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout-v26/activity_detail.xml" value="0.2526041666666667" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/activity_detail.xml" value="0.176" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/fragment_detail_content.xml" value="0.14010416666666667" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/fragment_news_list_page.xml" value="0.25364583333333335" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/layout_news_list_no_picture_title_item.xml" value="0.25364583333333335" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/layout_news_list_picture_title_item.xml" value="0.25364583333333335" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/viewpager2_detailpage_item.xml" value="0.19427083333333334" />
+>>>>>>> 90e2124799dc567a3cdb8e28cf5893c798d3b7d5
       </map>
     </option>
   </component>
