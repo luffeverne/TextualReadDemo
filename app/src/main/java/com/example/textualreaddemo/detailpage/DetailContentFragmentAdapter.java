@@ -27,4 +27,6 @@ public class DetailContentFragmentAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return detailContentFragmentList.size();
     }
+
+
 }
