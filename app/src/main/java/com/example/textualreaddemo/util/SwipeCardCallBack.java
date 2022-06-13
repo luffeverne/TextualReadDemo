@@ -27,7 +27,7 @@ public class SwipeCardCallBack extends ItemTouchHelper.SimpleCallback {
      */
     public SwipeCardCallBack(List<NewsListData> mDatas, NewsListRecyclerViewAdapter adapter) {
         super(0,
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT |
+//                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT |
                 ItemTouchHelper.UP | ItemTouchHelper.DOWN
         );
         this.mDatas = mDatas;

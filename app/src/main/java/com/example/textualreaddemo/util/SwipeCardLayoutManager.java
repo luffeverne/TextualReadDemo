@@ -47,7 +47,6 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
             measureChildWithMargins(view, 0, 0);
             int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
             int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
-            int level = itemCount - i - 1;
             //摆放cardView
             layoutDecorated(view,
                     widthSpace / 2,
@@ -55,16 +54,17 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
                     widthSpace / 2 + getDecoratedMeasuredWidth(view),
                     getHeight() - getHeight() / 7 );
             //层叠效果--Scale+TranslationY
+            int level = itemCount - i - 1;
             if(level>0){
                 if(level<CardConfig.MAX_SHOW_COUNT){
                     view.setTranslationY(TRANS_Y_GAP*level*1.5f);
                     view.setScaleX(1-CardConfig.SCALE_GAP*level);
                     view.setScaleY(1-CardConfig.SCALE_GAP*level);
                 }
-            }else {
-                view.setTranslationY(TRANS_Y_GAP*(level-1));
-                view.setScaleX(1-CardConfig.SCALE_GAP*(level-1));
-                view.setScaleY(1-CardConfig.SCALE_GAP*(level-1));
+//            }else {
+//                view.setTranslationY(TRANS_Y_GAP*(level-1));
+//                view.setScaleX(1-CardConfig.SCALE_GAP*(level-1));
+//                view.setScaleY(1-CardConfig.SCALE_GAP*(level-1));
             }
 //            view.setTranslationY(CardConfig.MAX_SHOW_COUNT*level*5f);
         }
@@ -80,7 +80,7 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
 //                -getDecoratedMeasuredHeight(view)+heightSpace ,
 //                widthSpace / 2 + getDecoratedMeasuredWidth(view),
 //                heightSpace);
-//        view.setTranslationY(1);
+//        view.setTranslationY(-1*TRANS_Y_GAP);
     }
 
 

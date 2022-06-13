@@ -2,7 +2,6 @@ package com.example.textualreaddemo;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
