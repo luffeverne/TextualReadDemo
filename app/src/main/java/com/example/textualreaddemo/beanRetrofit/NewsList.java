@@ -2,8 +2,10 @@ package com.example.textualreaddemo.beanRetrofit;
 
 import java.util.List;
 
+/**
+ * 非详情新闻列表数据相关类
+ */
 public class NewsList {
-    //json 数据格式采用String接收
     public String code;
     public String msg;
     public List<Data> data;

@@ -44,13 +44,6 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_list_page,container,false);
 
-        //test_toDetailActivity
-        view.findViewById(R.id.test_toDetailActivity).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(),DetailActivity.class));
-            }
-        });
 
         recyclerView = view.findViewById(R.id.news_list_recycler_view);
 

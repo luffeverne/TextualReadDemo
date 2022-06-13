@@ -6,10 +6,7 @@ package com.example.textualreaddemo.beanRetrofit;
 import java.util.List;
 
 /**
- * Auto-generated: 2022-06-08 21:45:49
- *
- * @author bejson.com (i@bejson.com)
- * @website http://www.bejson.com/java2pojo/
+ * 新闻类型数据相关类
  */
 public class NewsTypes {
 

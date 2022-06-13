@@ -9,6 +9,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.List;
 
+/**
+ * DetailContentFragmentAdapter 为 DetailActivity 里面 viewpager2 的适配器
+ */
 public class DetailContentFragmentAdapter extends FragmentStateAdapter {
     private List<DetailContentFragment> detailContentFragmentList;
 
@@ -27,6 +30,5 @@ public class DetailContentFragmentAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return detailContentFragmentList.size();
     }
-
 
 }

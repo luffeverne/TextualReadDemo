@@ -2,6 +2,9 @@ package com.example.textualreaddemo.beanRetrofit;
 
 import java.util.List;
 
+/**
+ * 新闻详情数据相关类
+ */
 public class NewsDetail {
     public String code;
     public String msg;
