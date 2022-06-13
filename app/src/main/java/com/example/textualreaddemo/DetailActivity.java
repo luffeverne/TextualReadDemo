@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
-
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -17,14 +16,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.textualreaddemo.beanRetrofit.NewsDetail;
 import com.example.textualreaddemo.beanRetrofit.NewsList;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 import com.example.textualreaddemo.detailpage.DetailContentFragment;
 import com.example.textualreaddemo.detailpage.DetailContentFragmentAdapter;
 import com.example.textualreaddemo.detailpage.IFragmentCallback;
 import com.example.textualreaddemo.networkRetrofit.NewsUtility;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +47,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         viewPager2 = findViewById(R.id.vp_detail);
+
 
         btns_bottom_detail = findViewById(R.id.btns_bottom_detail);
         btn_up = findViewById(R.id.btn_up);
@@ -99,6 +99,5 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-
-
 }
+

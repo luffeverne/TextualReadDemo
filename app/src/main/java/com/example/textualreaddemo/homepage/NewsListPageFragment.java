@@ -62,8 +62,8 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
         progressDialog.setMessage("请稍后...");
 
         newsListViewPresenter = new NewsListViewPresenter(this);//创建P层对象
-        //load();
-        testD();
+        load();
+//        testD();
         return view;
     }
 
@@ -83,58 +83,57 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
 
     @Override
     public void getDataSuccess() {
-        Toast.makeText(activity, "加载成功", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "网络加载成功", Toast.LENGTH_SHORT).show();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         String temp = sp.getString("NewsList",null);
         if (temp != null){
-            NewsListBean newsListBean = NewsDataUtility.handleNewsListResponse(temp);
-            adapter.setData(newsListBean.getData());
+            testD(temp);
         }
     }
 
     @Override
     public void getDataFailure() {
-        Toast.makeText(activity, "加载失败", Toast.LENGTH_SHORT).show();
-    }
-
-    private void testD(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         String temp = sp.getString("NewsList",null);
-        //判断数据是否为空
         if (temp != null){
-            NewsListBean newsListBean = NewsDataUtility.handleNewsListResponse(temp);
-            //判断数据是否正确
-            if (newsListBean != null && "数据返回成功！".equals(newsListBean.getMsg())){
-                SwipeCardLayoutManager swmanamger = new SwipeCardLayoutManager(activity);
-                recyclerView.setLayoutManager(swmanamger);
-                adapter = new NewsListRecyclerViewAdapter(activity);
-
-                //设置数据
-                adapter.setData(newsListBean.getData());
-                //设置点击事件
-                adapter.setOnItemClickListener(new NewsListRecyclerViewAdapter.MyOnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        view.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(activity, DetailActivity.class);
-                                intent.putExtra("newsId",newsListBean.getData().get(position).getNewsId());
-                                activity.startActivity(intent);
-                            }
-                        });
-                    }
-                });
-                recyclerView.setAdapter(adapter);
-                //配置布局信息文件
-                CardConfig.initConfig(activity);
-                //设置触摸效果
-                ItemTouchHelper.Callback callback=new SwipeCardCallBack(newsListBean.getData(),adapter);
-                ItemTouchHelper helper=new ItemTouchHelper(callback);
-                helper.attachToRecyclerView(recyclerView);
-            }
+            testD(temp);
+        }else {
+            Toast.makeText(activity, "无缓存，请重新获取", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void testD(String temp) {
+        NewsListBean newsListBean = NewsDataUtility.handleNewsListResponse(temp);
+        //判断数据是否正确
+        if (newsListBean != null && "数据返回成功！".equals(newsListBean.getMsg())) {
+            SwipeCardLayoutManager swmanamger = new SwipeCardLayoutManager(activity);
+            recyclerView.setLayoutManager(swmanamger);
+            adapter = new NewsListRecyclerViewAdapter(activity);
 
+            //设置数据
+            adapter.setData(newsListBean.getData());
+            //设置点击事件
+            adapter.setOnItemClickListener(new NewsListRecyclerViewAdapter.MyOnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(activity, DetailActivity.class);
+                            intent.putExtra("newsId", newsListBean.getData().get(position).getNewsId());
+                            activity.startActivity(intent);
+                        }
+                    });
+                }
+            });
+            recyclerView.setAdapter(adapter);
+            //配置布局信息文件
+            CardConfig.initConfig(activity);
+            //设置触摸效果
+            ItemTouchHelper.Callback callback = new SwipeCardCallBack(newsListBean.getData(), adapter);
+            ItemTouchHelper helper = new ItemTouchHelper(callback);
+            helper.attachToRecyclerView(recyclerView);
+        }
+
+    }
 }
