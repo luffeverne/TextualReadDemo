@@ -5,43 +5,79 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:text="新用户注册"
+        android:textSize="30sp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:orientation="vertical"
-        android:padding="30dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新用户注册"
-            android:textSize="30sp" />
+        android:padding="20dp">
 
         <EditText
             android:id="@+id/text_username"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:hint="请输入您的账号名"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <EditText
             android:id="@+id/text_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:hint="请输入您的密码"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            tools:ignore="TouchTargetSizeCheck" />
 
 
         <EditText
             android:id="@+id/text_confirmPassword"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:hint="请确认您的密码"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
+
+        <!--验证码-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:layout_marginLeft="5dp"
+                android:text="验证码"/>
+            <EditText
+                android:id="@+id/text_InputCode"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:hint="请输入4位验证码" />
+            <ImageView
+                android:id="@+id/btn_showCode"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_weight="1.5"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:layout_marginTop="-10dp" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_register"
@@ -57,7 +93,16 @@
             android:text="取消"
             android:textSize="20sp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:text="注册即代表同意《用户协议》" />
+
     </LinearLayout>
+
 
 
 </RelativeLayout>
