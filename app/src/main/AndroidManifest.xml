@@ -19,25 +19,38 @@
         <activity
             android:name=".DetailActivity"
             android:exported="true" />
+
+
         <activity
             android:name=".LoginActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true">
 
         </activity>
+
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true">
+<<<<<<< HEAD
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+=======
+
+>>>>>>> bf392dca3d2c4a5de12bdec2736a88ccebf7264b
+        </activity>
+
+
+        <activity
+            android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".RegisterActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:exported="true">
         </activity>
     </application>
 
