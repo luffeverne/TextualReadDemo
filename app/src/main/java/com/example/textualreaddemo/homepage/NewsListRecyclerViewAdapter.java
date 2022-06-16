@@ -74,7 +74,6 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof PictureTitleViewHolder){
             ((PictureTitleViewHolder) holder).itemTitle.setText(mItems.get(position).getTitle());
-            String test = mItems.get(position).getImgList().get(0);
             Glide.with(holder.itemView.getContext())
                     .load(mItems.get(position).getImgList().get(0))
                     .into(((PictureTitleViewHolder) holder).imageView);
