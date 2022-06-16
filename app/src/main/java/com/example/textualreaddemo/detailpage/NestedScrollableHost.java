@@ -22,13 +22,12 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import androidx.viewpager2.widget.ViewPager2;
-
+import kotlin.jvm.internal.Intrinsics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import kotlin.jvm.internal.Intrinsics;
 
 
 /**
@@ -44,13 +43,12 @@ public final class NestedScrollableHost extends FrameLayout {
     private float initialX;
     private float initialY;
 
-    //找到 viewpager2
     private final ViewPager2 getParentViewPager() {
         ViewParent viewParent = this.getParent();
         if (!(viewParent instanceof View)) {
             viewParent = null;
         }
-        //遍历，找到找到 viewpager2
+
         View v;
         for(v = (View)viewParent; v != null && !(v instanceof ViewPager2); v = (View)viewParent) {
             viewParent = v.getParent();
@@ -72,7 +70,6 @@ public final class NestedScrollableHost extends FrameLayout {
         return this.getChildCount() > 0 ? this.getChildAt(0) : null;
     }
 
-    //判断滚动的子view是否还可以滚动
     private final boolean canChildScroll(int orientation, float delta) {
         int direction = -((int)Math.signum(delta));
         View viewChild;
@@ -96,8 +93,7 @@ public final class NestedScrollableHost extends FrameLayout {
 
         return flag;
     }
-
-//官方demo这个办法不行
+//这个办法不行，重写下面那个方法分发view事件
 //    @Override
 //    public boolean onInterceptTouchEvent(@NotNull MotionEvent e) {
 //        Intrinsics.checkNotNullParameter(e, "e");
@@ -105,7 +101,7 @@ public final class NestedScrollableHost extends FrameLayout {
 //        return super.onInterceptTouchEvent(e);
 //    }
 
-    //重写下面方法分发view事件
+    //重写下面方法分发事件
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Intrinsics.checkNotNullParameter(ev, "e");

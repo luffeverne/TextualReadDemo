@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TextualReadDemo"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".DetailActivity"
             android:exported="true" />
@@ -42,6 +43,13 @@
             android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
+<<<<<<< HEAD
+=======
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+>>>>>>> 66d7ff9d89adec40007c8d7c4742a94d3187d925
         </activity>
     </application>
 
