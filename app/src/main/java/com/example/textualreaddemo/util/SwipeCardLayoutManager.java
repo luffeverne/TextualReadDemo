@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 编写 LayoutManager工具
- * 更新时间：2022-6-9 19：27
+ * 更新时间：2022-6-15 20：27
  * @author houdeng
  */
 public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
@@ -42,12 +42,12 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
             bottomPosition = itemCount - 5;
         }
         for (int i = bottomPosition; i < itemCount; i++) {
+
             View view = recycler.getViewForPosition(i);
             addView(view);
             measureChildWithMargins(view, 0, 0);
             int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
             int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
-            int level = itemCount - i - 1;
             //摆放cardView
             layoutDecorated(view,
                     widthSpace / 2,
@@ -55,6 +55,7 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
                     widthSpace / 2 + getDecoratedMeasuredWidth(view),
                     getHeight() - getHeight() / 7 );
             //层叠效果--Scale+TranslationY
+            int level = itemCount - i - 1;
             if(level>0){
                 if(level<CardConfig.MAX_SHOW_COUNT){
                     view.setTranslationY(TRANS_Y_GAP*level*1.5f);
@@ -62,25 +63,25 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
                     view.setScaleY(1-CardConfig.SCALE_GAP*level);
                 }
             }else {
-                view.setTranslationY(TRANS_Y_GAP*(level-1));
-                view.setScaleX(1-CardConfig.SCALE_GAP*(level-1));
-                view.setScaleY(1-CardConfig.SCALE_GAP*(level-1));
+                view.setTranslationY(TRANS_Y_GAP*(level));
+                view.setScaleX(1-CardConfig.SCALE_GAP*(level));
+                view.setScaleY(1-CardConfig.SCALE_GAP*(level));
             }
 //            view.setTranslationY(CardConfig.MAX_SHOW_COUNT*level*5f);
         }
-        //设置前一个新闻card，但实现效果不好
-//        View view = recycler.getViewForPosition(0);
-//        addView(view);
-//        measureChildWithMargins(view, 0, 0);
-//        int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
-//        int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
-//        //摆放cardView
-//        layoutDecorated(view,
-//                widthSpace / 2,
-//                -getDecoratedMeasuredHeight(view)+heightSpace ,
-//                widthSpace / 2 + getDecoratedMeasuredWidth(view),
-//                heightSpace);
-//        view.setTranslationY(1);
+//        设置前一个新闻card，但实现效果不好
+        View view = recycler.getViewForPosition(0);
+        addView(view);
+        measureChildWithMargins(view, 0, 0);
+        int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
+        int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
+        //摆放cardView
+        layoutDecorated(view,
+                widthSpace / 2,
+                -getDecoratedMeasuredHeight(view)+heightSpace ,
+                widthSpace / 2 + getDecoratedMeasuredWidth(view),
+                heightSpace);
+        view.setTranslationY(-1*TRANS_Y_GAP);
     }
 
 

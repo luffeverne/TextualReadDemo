@@ -7,6 +7,9 @@
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/fragment_my_page.xml" value="0.14356884057971014" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/fragment_news_list_page.xml" value="0.14356884057971014" />
         <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/fragment_search_page.xml" value="0.14356884057971014" />
+        <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_concerned_news_list_item.xml" value="0.1" />
+        <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_news_list_no_picture_title_item.xml" value="0.1" />
+        <entry key="..\:/AndroidLearn/TextualReadDemo/app/src/main/res/layout/layout_news_list_picture_title_item.xml" value="0.1" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.1195" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/drawable/ic_baseline_favorite_border_24.xml" value="0.1195" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.1295" />
