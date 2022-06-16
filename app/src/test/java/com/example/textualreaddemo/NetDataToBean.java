@@ -21,14 +21,14 @@ public class NetDataToBean {
     public void c() {
         System.out.println(NewsUtility.getNewsDetail("EJA5MJQ30001875N").getData().getImages().size());
         List<NewsDetail.Data.Images> images = NewsUtility.getNewsDetail("EJA5MJQ30001875N").getData().getImages();
-        List<String> imgSrcs = new ArrayList<>();
-        List<String> imgSrcPosition = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            imgSrcs.add(images.get(i).imgSrc);
-            imgSrcPosition.add(images.get(i).position);
+        //List<String> imgSrcs = new ArrayList<>();
+        //List<String> imgSrcPosition = new ArrayList<>();
+        for (int i = 0; i < images.size(); i++) {
+            //imgSrcs.add(images.get(i).imgSrc);
+            //imgSrcPosition.add(images.get(i).position);
         }
-        System.out.println(imgSrcs);
-        System.out.println(imgSrcPosition);
+        //System.out.println(imgSrcs);
+        //System.out.println(imgSrcPosition);
     }
 
 }

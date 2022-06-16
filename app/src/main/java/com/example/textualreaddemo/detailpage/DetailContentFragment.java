@@ -20,6 +20,10 @@ import com.example.textualreaddemo.beanRetrofit.NewsDetail;
 import com.example.textualreaddemo.beanRetrofit.NewsList;
 import com.example.textualreaddemo.networkRetrofit.NewsUtility;
 
+import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter;
+import org.sufficientlysecure.htmltextview.HtmlTextView;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +44,9 @@ public class DetailContentFragment extends Fragment {
     // NestedScrollView 用于包裹新闻详情内容
     private NestedScrollView nestedScrollView;
     //新闻详情的标题，具体内容
-    private TextView title_detail,content_detail;
+    private TextView title_detail;
+    private HtmlTextView htmlTextView;
+    private StringBuilder stringBuilder;
     //新闻详情的数据
     private NewsDetail.Data newsDetailData;
 
@@ -80,6 +86,22 @@ public class DetailContentFragment extends Fragment {
         if (newsDetailData == null)
             Toast.makeText(getActivity(),"请求超时，该新闻不存在",Toast.LENGTH_SHORT).show();
 
+        //图片地址列表
+        List<String> imgSrcs = new ArrayList<>();
+        List<String> imgPositions = new ArrayList<>();
+        for (int i = 0; i < newsDetailData.getImages().size(); i++) {
+            imgSrcs.add(newsDetailData.getImages().get(i).imgSrc);
+            imgPositions.add(newsDetailData.getImages().get(i).position);
+        }
+        String Content = newsDetailData.getContent();
+        Solution solution = new Solution();
+        stringBuilder = new StringBuilder("");
+        for (int i = 0; i < imgSrcs.size(); i++) {
+            int index = solution.strStr(Content,imgPositions.get(i));
+            stringBuilder.append(Content.substring(0,index))
+                    .append("<img  src='" + imgSrcs.get(i) + "'/>");
+            Content = Content.substring(imgPositions.get(i).length() + index);
+        }
     }
 
     @Override
@@ -93,12 +115,18 @@ public class DetailContentFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_detail_content, container, false);
         nestedScrollView = rootView.findViewById(R.id.myNestedScrollView);
         title_detail = rootView.findViewById(R.id.title_detail);
-        content_detail = rootView.findViewById(R.id.content_detail);
+        htmlTextView = rootView.findViewById(R.id.html_textview);
 
         if (newsDetailData != null) {
             title_detail.setText(newsDetailData.getTitle());
-            content_detail.setText(newsDetailData.getContent());
+            if (newsDetailData.getImages().size() != 0) {
+                htmlTextView.setHtml(stringBuilder.toString(),new HtmlHttpImageGetter(htmlTextView));
+            } else {
+                htmlTextView.setHtml(newsDetailData.getContent(),new HtmlHttpImageGetter(htmlTextView));
+            }
+
         }
+
 
         //监听 nestedScrollView 的滑动和停止
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -113,5 +141,45 @@ public class DetailContentFragment extends Fragment {
             }
         });
         return rootView;
+    }
+}
+
+class Solution {
+    // 获得前缀表
+    public void getNext(int[] next, String s){
+        int j = -1;
+        next[0] = j;
+        for (int i = 1; i<s.length(); i++){
+            while(j>=0 && s.charAt(i) != s.charAt(j+1)){
+                j=next[j];
+            }
+
+            if(s.charAt(i)==s.charAt(j+1)){
+                j++;
+            }
+            next[i] = j;
+        }
+    }
+    public int strStr(String haystack, String needle) {
+        if(needle.length()==0){
+            return 0;
+        }
+
+        int[] next = new int[needle.length()];
+        getNext(next, needle);
+        int j = -1;
+        for(int i = 0; i<haystack.length();i++){
+            while(j>=0 && haystack.charAt(i) != needle.charAt(j+1)){
+                j = next[j];
+            }
+            if(haystack.charAt(i)==needle.charAt(j+1)){
+                j++;
+            }
+            if(j==needle.length()-1){
+                return (i-needle.length()+1);
+            }
+        }
+
+        return -1;
     }
 }
