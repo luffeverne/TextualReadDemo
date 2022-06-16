@@ -1,7 +1,9 @@
 package com.example.textualreaddemo.detailpage;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
@@ -26,12 +28,12 @@ import java.util.List;
 public class DetailContentFragment extends Fragment {
 
     // DetailActivity 向 DetailContentFragment 通信（传递数据）时使用的参数
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_DETAILNEWSID = "detailNewsID";
 
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String detailNewsID;
     private String mParam2;
     private View rootView;
 
@@ -39,7 +41,6 @@ public class DetailContentFragment extends Fragment {
     private NestedScrollView nestedScrollView;
     //新闻详情的标题，具体内容
     private TextView title_detail,content_detail;
-    private String detailNewsID;
     //新闻详情的数据
     private NewsDetail.Data newsDetailData;
 
@@ -57,26 +58,33 @@ public class DetailContentFragment extends Fragment {
     public static DetailContentFragment newInstance(String param1, String param2) {
         DetailContentFragment fragment = new DetailContentFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_DETAILNEWSID, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            detailNewsID = getArguments().getString(ARG_DETAILNEWSID);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
         //DetailActivity 传过来的新闻详情id
-        detailNewsID = mParam1;
-        newsDetailData = NewsUtility.getNewsDetail(detailNewsID).getData();
-        while (newsDetailData == null) {
+        System.out.println(detailNewsID);
+        for (int i = 0; i < 3; i++) {
             newsDetailData = NewsUtility.getNewsDetail(detailNewsID).getData();
+            if (newsDetailData != null) break;
         }
+        if (newsDetailData == null)
+            Toast.makeText(getActivity(),"请求超时，该新闻不存在",Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -86,25 +94,24 @@ public class DetailContentFragment extends Fragment {
         nestedScrollView = rootView.findViewById(R.id.myNestedScrollView);
         title_detail = rootView.findViewById(R.id.title_detail);
         content_detail = rootView.findViewById(R.id.content_detail);
-        title_detail.setText(newsDetailData.getTitle());
-        content_detail.setText(newsDetailData.getContent());
+
+        if (newsDetailData != null) {
+            title_detail.setText(newsDetailData.getTitle());
+            content_detail.setText(newsDetailData.getContent());
+        }
 
         //监听 nestedScrollView 的滑动和停止
-        nestedScrollView.setOnTouchListener(new View.OnTouchListener() {
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    if (fragmentCallback != null)
-                        fragmentCallback.sendMsgToActivity("scrolling");
-                } else {
-                    if (fragmentCallback != null)
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if(scrollY == 0 || scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())){
+                    //滑动到顶部，底部
                     fragmentCallback.sendMsgToActivity("stopScrolling");
+                } else {
+                    fragmentCallback.sendMsgToActivity("scrolling");
                 }
-
-                return false;
             }
         });
         return rootView;
     }
-
 }

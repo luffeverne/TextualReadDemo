@@ -31,6 +31,8 @@ import java.util.List;
 
 
 public class DetailActivity extends AppCompatActivity {
+    //合格新闻id长度,VQ83OGT2N(不合格），H9U4JBKA0552NSSC（合格）
+    final static int RIGHT_DETAIL_NEWS_LENGTH = 10;
     //管理新闻详情
     ViewPager2 viewPager2;
     //viewPager2 的 DetailContentFragment
@@ -58,21 +60,21 @@ public class DetailActivity extends AppCompatActivity {
         newsDetailDataFromHomepageID = intent.getStringExtra("newsId");
 
         viewPager2 = findViewById(R.id.vp_detail);
-        adapter = new DetailContentFragmentAdapter(this,detailContentFragmentList);
-        viewPager2.setAdapter(adapter);
-
         btns_bottom_detail = findViewById(R.id.btns_bottom_detail);
         btn_up = findViewById(R.id.btn_up);
         btn_down = findViewById(R.id.btn_down);
 
         //获取新闻详情id
-        newsListData = NewsUtility.getNewsList().getData();
-        while (newsListData == null) {
+        for (int i = 0; i < 10; i++) {
             newsListData = NewsUtility.getNewsList().getData();
+            if (newsListData != null) break;
         }
+        if (newsListData == null)
+            Toast.makeText(DetailActivity.this,"新闻列表出现问题，请刷新",Toast.LENGTH_LONG).show();
         newsDetailDataID.add(newsDetailDataFromHomepageID);
         for (int i = 0; i < newsListData.size(); i++) {
-            newsDetailDataID.add(newsListData.get(i).newsId);
+            if (newsListData.get(i).newsId.length() > RIGHT_DETAIL_NEWS_LENGTH)
+                newsDetailDataID.add(newsListData.get(i).newsId);
         }
 
         //单例模式创建对应数量的 DetailContentFragment
@@ -80,23 +82,27 @@ public class DetailActivity extends AppCompatActivity {
             detailContentFragmentList.add(DetailContentFragment.newInstance(newsDetailDataID.get(i),"1"));
         }
 
+        adapter = new DetailContentFragmentAdapter(DetailActivity.this,detailContentFragmentList);
+        viewPager2.setAdapter(adapter);
+
         //设置 viewPager2 页面监听 DetailContentFragment
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 currentFragment = detailContentFragmentList.get(position);
-
                 //通信接收当前 DetailContentFragment 发来其的滚动状态，然后对控件是否隐藏进行操作
                 currentFragment.setFragmentCallback(new IFragmentCallback() {
                     @Override
                     public void sendMsgToActivity(String msg) {
                         if (msg.equals("scrolling")) {
+                            viewPager2.setUserInputEnabled(false);
                             btn_up.setVisibility(View.GONE);
                             btn_down.setVisibility(View.GONE);
                             btns_bottom_detail.setVisibility(View.GONE);
                         }
                         if (msg.equals("stopScrolling")) {
+                            viewPager2.setUserInputEnabled(true);
                             btn_up.setVisibility(View.VISIBLE);
                             btn_down.setVisibility(View.VISIBLE);
                             btns_bottom_detail.setVisibility(View.VISIBLE);
