@@ -57,11 +57,11 @@ public class NewsUtility {
     }
 
     //返回非详情新闻的列表数据
-    public static NewsList getNewsList() {
+    public static NewsList getNewsList(String typeId) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Call<ResponseBody> newsListCall = netbingService.getNewsList("509", "1", APP_ID, APP_SECRET);
+                Call<ResponseBody> newsListCall = netbingService.getNewsList(typeId, "1", APP_ID, APP_SECRET);
                 Response<ResponseBody> response = null;
                 try {
                     response = newsListCall.execute();

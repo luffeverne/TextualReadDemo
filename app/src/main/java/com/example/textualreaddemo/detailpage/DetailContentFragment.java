@@ -2,27 +2,19 @@ package com.example.textualreaddemo.detailpage;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.textualreaddemo.R;
 import com.example.textualreaddemo.beanRetrofit.NewsDetail;
-import com.example.textualreaddemo.beanRetrofit.NewsList;
 import com.example.textualreaddemo.networkRetrofit.NewsUtility;
-
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +70,7 @@ public class DetailContentFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         //DetailActivity 传过来的新闻详情id
-        System.out.println(detailNewsID);
+        //System.out.println(detailNewsID);
         for (int i = 0; i < 3; i++) {
             newsDetailData = NewsUtility.getNewsDetail(detailNewsID).getData();
             if (newsDetailData != null) break;
@@ -86,22 +78,29 @@ public class DetailContentFragment extends Fragment {
         if (newsDetailData == null)
             Toast.makeText(getActivity(),"请求超时，该新闻不存在",Toast.LENGTH_SHORT).show();
 
-        //图片地址列表
-        List<String> imgSrcs = new ArrayList<>();
-        List<String> imgPositions = new ArrayList<>();
-        for (int i = 0; i < newsDetailData.getImages().size(); i++) {
-            imgSrcs.add(newsDetailData.getImages().get(i).imgSrc);
-            imgPositions.add(newsDetailData.getImages().get(i).position);
+        if (newsDetailData != null) {
+            if (newsDetailData.getImages() != null) {
+                if (newsDetailData.getImages().size() != 0) {
+                    //图片地址列表
+                    List<String> imgSrcs = new ArrayList<>();
+                    List<String> imgPositions = new ArrayList<>();
+                    for (int i = 0; i < newsDetailData.getImages().size(); i++) {
+                        imgSrcs.add(newsDetailData.getImages().get(i).imgSrc);
+                        imgPositions.add(newsDetailData.getImages().get(i).position);
+                    }
+                    String Content = newsDetailData.getContent();
+                    Solution solution = new Solution();
+                    stringBuilder = new StringBuilder("");
+                    for (int i = 0; i < imgSrcs.size(); i++) {
+                        int index = solution.strStr(Content,imgPositions.get(i));
+                        stringBuilder.append(Content.substring(0,index))
+                                .append("<img  src='" + imgSrcs.get(i) + "'/>");
+                        Content = Content.substring(imgPositions.get(i).length() + index);
+                    }
+                }
+            }
         }
-        String Content = newsDetailData.getContent();
-        Solution solution = new Solution();
-        stringBuilder = new StringBuilder("");
-        for (int i = 0; i < imgSrcs.size(); i++) {
-            int index = solution.strStr(Content,imgPositions.get(i));
-            stringBuilder.append(Content.substring(0,index))
-                    .append("<img  src='" + imgSrcs.get(i) + "'/>");
-            Content = Content.substring(imgPositions.get(i).length() + index);
-        }
+
     }
 
     @Override
@@ -119,12 +118,15 @@ public class DetailContentFragment extends Fragment {
 
         if (newsDetailData != null) {
             title_detail.setText(newsDetailData.getTitle());
-            if (newsDetailData.getImages().size() != 0) {
-                htmlTextView.setHtml(stringBuilder.toString(),new HtmlHttpImageGetter(htmlTextView));
+            if (newsDetailData.getImages() != null) {
+                if (newsDetailData.getImages().size() != 0) {
+                    htmlTextView.setHtml(stringBuilder.toString(),new HtmlHttpImageGetter(htmlTextView));
+                } else {
+                    htmlTextView.setHtml(newsDetailData.getContent(),new HtmlHttpImageGetter(htmlTextView));
+                }
             } else {
                 htmlTextView.setHtml(newsDetailData.getContent(),new HtmlHttpImageGetter(htmlTextView));
             }
-
         }
 
 

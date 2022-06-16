@@ -7,15 +7,23 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class NetDataToBean {
     @Test
     public void a() {
-        System.out.println(NewsUtility.getNewsTypes().getData());
+        System.out.println(NewsUtility.getNewsTypes().getData().size());
+        for (int i = 0; i < NewsUtility.getNewsTypes().getData().size(); i++) {
+            System.out.println(NewsUtility.getNewsTypes().getData().get(i).typeId);
+        }
+        Random random = new Random();
+        for (int i = 0; i < NewsUtility.getNewsTypes().getData().size(); i++) {
+            System.out.println(random.nextInt(16));
+        }
     }
     @Test
     public void b() {
-        System.out.println(NewsUtility.getNewsList().getData());
+        System.out.println(NewsUtility.getNewsList("509").getData());
     }
     @Test
     public void c() {
