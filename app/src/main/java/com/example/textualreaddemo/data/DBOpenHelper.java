@@ -3,30 +3,36 @@ package com.example.textualreaddemo.data;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
     private SQLiteDatabase db;
 
+    public static final String CREATE_USER = "CREATE TABLE IF NOT EXISTS user(" +
+            "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "name TEXT," +
+            "password TEXT)";
+
+    public static final String DROP_USER = "DROP TABLE IF EXISTS user";
+
     public DBOpenHelper(Context context){
-        super(context,"db_user",null,1);
+        super(context,"db_reader",null,1);
         db = getReadableDatabase();
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS user(" +
-                "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name TEXT," +
-                "password TEXT)");
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_USER);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS user");
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(DROP_USER);
         onCreate(db);
     }
 
@@ -51,7 +57,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     public ArrayList<User> getAllData() {
         ArrayList<User> list = new ArrayList<>();
         Cursor cursor = db.query("user", null, null, null, null, null, "name DESC");
-        while (cursor.moveToNext()) {  // 报红，但是能运行 
+        while (cursor.moveToNext()) {
             String name = cursor.getString(cursor.getColumnIndex("name"));
             String password = cursor.getString(cursor.getColumnIndex("password"));
             list.add(new User(name,password));

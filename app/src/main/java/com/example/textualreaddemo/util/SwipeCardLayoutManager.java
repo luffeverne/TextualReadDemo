@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 编写 LayoutManager工具
- * 更新时间：2022-6-15 20：27
+ * 更新时间：2022-6-9 19：27
  * @author houdeng
  */
 public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
@@ -42,7 +42,6 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
             bottomPosition = itemCount - 5;
         }
         for (int i = bottomPosition; i < itemCount; i++) {
-
             View view = recycler.getViewForPosition(i);
             addView(view);
             measureChildWithMargins(view, 0, 0);
@@ -62,26 +61,26 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
                     view.setScaleX(1-CardConfig.SCALE_GAP*level);
                     view.setScaleY(1-CardConfig.SCALE_GAP*level);
                 }
-            }else {
-                view.setTranslationY(TRANS_Y_GAP*(level));
-                view.setScaleX(1-CardConfig.SCALE_GAP*(level));
-                view.setScaleY(1-CardConfig.SCALE_GAP*(level));
+//            }else {
+//                view.setTranslationY(TRANS_Y_GAP*(level-1));
+//                view.setScaleX(1-CardConfig.SCALE_GAP*(level-1));
+//                view.setScaleY(1-CardConfig.SCALE_GAP*(level-1));
             }
 //            view.setTranslationY(CardConfig.MAX_SHOW_COUNT*level*5f);
         }
-//        设置前一个新闻card，但实现效果不好
-        View view = recycler.getViewForPosition(0);
-        addView(view);
-        measureChildWithMargins(view, 0, 0);
-        int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
-        int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
-        //摆放cardView
-        layoutDecorated(view,
-                widthSpace / 2,
-                -getDecoratedMeasuredHeight(view)+heightSpace ,
-                widthSpace / 2 + getDecoratedMeasuredWidth(view),
-                heightSpace);
-        view.setTranslationY(-1*TRANS_Y_GAP);
+        //设置前一个新闻card，但实现效果不好
+//        View view = recycler.getViewForPosition(0);
+//        addView(view);
+//        measureChildWithMargins(view, 0, 0);
+//        int widthSpace = getWidth() - getDecoratedMeasuredWidth(view);
+//        int heightSpace = getHeight() - getDecoratedMeasuredHeight(view);
+//        //摆放cardView
+//        layoutDecorated(view,
+//                widthSpace / 2,
+//                -getDecoratedMeasuredHeight(view)+heightSpace ,
+//                widthSpace / 2 + getDecoratedMeasuredWidth(view),
+//                heightSpace);
+//        view.setTranslationY(-1*TRANS_Y_GAP);
     }
 
 

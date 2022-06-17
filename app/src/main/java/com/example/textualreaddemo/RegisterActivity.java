@@ -91,7 +91,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         // 将用户名和密码加入到数据库中
                         mDBOpenHelper.add(username, confirmPassword);
                         // 注册成功了，进入主页
-                        Intent intent1 = new Intent(RegisterActivity.this, MainActivity.class);
+                        Intent intent1 = new Intent(RegisterActivity.this, LoginActivity.class);
                         startActivity(intent1);
                         finish();
                         Toast.makeText(RegisterActivity.this, "注册成功！", Toast.LENGTH_SHORT).show();
