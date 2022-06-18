@@ -57,5 +57,10 @@ dependencies {
     //HtmlTextView
     implementation 'org.sufficientlysecure:html-textview:4.0'
 
+    //Room
+    def lifecycle_version = "2.2.0"
+    implementation "androidx.room:room-runtime:$lifecycle_version"
+    annotationProcessor "androidx.room:room-compiler:$lifecycle_version"  // For Kotlin use kapt instead of annotationProcessor
+
 
 }
