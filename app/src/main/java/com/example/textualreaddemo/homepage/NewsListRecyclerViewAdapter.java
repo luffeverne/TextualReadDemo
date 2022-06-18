@@ -74,16 +74,13 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof PictureTitleViewHolder){
             ((PictureTitleViewHolder) holder).itemTitle.setText(mItems.get(position).getTitle());
-            String test = mItems.get(position).getImgList().get(0);
             Glide.with(holder.itemView.getContext())
                     .load(mItems.get(position).getImgList().get(0))
                     .into(((PictureTitleViewHolder) holder).imageView);
             ((PictureTitleViewHolder) holder).itemText.setText(mItems.get(position).getDigest());
-            ((PictureTitleViewHolder) holder).positionText.setText(mItems.get(position).getTitle());
         }else {
             ((TitleViewHolder)holder).itemText.setText(mItems.get(position).getDigest());
             ((TitleViewHolder)holder).itemTitle.setText(mItems.get(position).getTitle());
-            ((TitleViewHolder)holder).positionText.setText(mItems.get(position).getTitle());
         }
         if (mOnItemClickListener != null){
             mOnItemClickListener.onItemClick(holder.itemView,position);
@@ -103,13 +100,11 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         public TextView itemTitle;
         public TextView itemText;
         public ImageView imageView;
-        public TextView positionText;
         public PictureTitleViewHolder(@NonNull View itemView) {
             super(itemView);
             itemTitle = itemView.findViewById(R.id.news_list_title);
             imageView = itemView.findViewById(R.id.news_list_image);
             itemText = itemView.findViewById(R.id.news_list_text);
-            positionText = itemView.findViewById(R.id.news_position);
         }
     }
 
@@ -120,13 +115,11 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         public TextView itemTitle;
         public TextView itemText;
-        public TextView positionText;
 
         public TitleViewHolder(@NonNull View itemView) {
             super(itemView);
             itemTitle = itemView.findViewById(R.id.news_list_title);
             itemText = itemView.findViewById(R.id.news_list_text);
-            positionText = itemView.findViewById(R.id.news_position);
         }
     }
 

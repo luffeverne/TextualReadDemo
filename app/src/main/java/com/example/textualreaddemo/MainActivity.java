@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.textualreaddemo.homepage.MainViewAdapter;
-import com.example.textualreaddemo.homepage.MyPageFragment;
+import com.example.textualreaddemo.homepage.mypage.MyPageFragment;
 import com.example.textualreaddemo.homepage.NewsListPageFragment;
 import com.example.textualreaddemo.homepage.searchpage.SearchPageFragment;
 
