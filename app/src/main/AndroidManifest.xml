@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.textualreaddemo">
 
-<!--    <uses-permission android:name="android.permissionINTERNET" />-->
-<!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"

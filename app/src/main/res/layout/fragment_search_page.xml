@@ -7,12 +7,23 @@
 
     <include layout="@layout/layout_search_title"/>
 
-    <EditText
+
+    <SearchView
+        android:id="@+id/text_searchContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/search_background"
+        android:focusable="true"
         android:padding="10dp"
-        android:hint="搜索框"/>
+        android:queryHint="请输入搜索内容" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="150dp">
