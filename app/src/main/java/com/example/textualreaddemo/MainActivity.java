@@ -2,6 +2,7 @@ package com.example.textualreaddemo;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import com.example.textualreaddemo.homepage.MainViewAdapter;
 import com.example.textualreaddemo.homepage.mypage.MyPageFragment;
 import com.example.textualreaddemo.homepage.NewsListPageFragment;
 import com.example.textualreaddemo.homepage.searchpage.SearchPageFragment;
+import com.example.textualreaddemo.service.UpdateNewsService;
 import com.example.textualreaddemo.util.NetworkBroadcastUtils;
 
 /**
@@ -42,6 +44,9 @@ public class MainActivity extends AppCompatActivity{
         // 给viewpager2控件设置适配器
         setViewPager2Adapter();
 
+        //启动服务
+        Intent intent = new Intent(this, UpdateNewsService.class);
+        startService(intent);
     }
 
     private void setViewPager2Adapter() {

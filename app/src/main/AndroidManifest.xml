@@ -42,17 +42,12 @@
             android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-<<<<<<< HEAD
-=======
-
->>>>>>> 22155809cfd14a3d6bf5e7713e06e0dbff9f6ba8
         </activity>
 
-        <receiver
-            android:name=".broadcast.NetworkReceiver"
+        <service android:name=".service.UpdateNewsService"
             android:enabled="true"
             android:exported="true">
-        </receiver>
+        </service>
     </application>
 
 </manifest>
