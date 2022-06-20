@@ -27,8 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="30dp"
+        android:inputType="textPassword"
         android:hint="密码" />
-
 
 
     <LinearLayout
@@ -71,6 +71,6 @@
         android:textColor="#00aaff"
         android:textSize="15sp" />
 
-<!--    </RelativeLayout>-->
+    <!--    </RelativeLayout>-->
 
 </LinearLayout>
