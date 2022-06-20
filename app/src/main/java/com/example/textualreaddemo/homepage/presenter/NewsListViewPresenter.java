@@ -35,8 +35,7 @@ public class NewsListViewPresenter implements INewsListViewPresenter, CallBack {
     }
 
     @Override
-    public void onFailure() {
-        newsListView.hideProgress();
-        newsListView.getDataFailure();
+    public void onFailure(Activity activity) {
+        newsListModel.getNewsListData(activity , this);
     }
 }

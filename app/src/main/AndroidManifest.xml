@@ -4,6 +4,7 @@
     package="com.example.textualreaddemo">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -43,14 +44,13 @@
             android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-<<<<<<< HEAD
-=======
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
->>>>>>> 66d7ff9d89adec40007c8d7c4742a94d3187d925
         </activity>
+
+        <receiver
+            android:name=".broadcast.NetworkReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

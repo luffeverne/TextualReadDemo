@@ -10,6 +10,5 @@ public interface INewsListView {
     void hideProgress();
 
     void getDataSuccess();
-    void getDataFailure();
 
 }
