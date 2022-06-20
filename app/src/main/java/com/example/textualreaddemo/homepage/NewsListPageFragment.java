@@ -146,10 +146,6 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
             public void NoNetWork() {
                 getFromSP();
             }
-            @Override
-            public void mobileNetWork() {
-                newsListViewPresenter.getNewsListData(activity);
-            }
         });
     }
 

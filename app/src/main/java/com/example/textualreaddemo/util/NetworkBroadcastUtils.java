@@ -34,11 +34,8 @@ public class NetworkBroadcastUtils {
             if (!wifi.isConnected() && !mobile.isConnected()) {
                 //没网络 获取数据库
                 networkMethod.NoNetWork();
-            }else if(mobile.isConnected()){
-                networkMethod.mobileNetWork();
             } else {
-                //有网络 走请求
-                //请求数据
+                //有网络 请求数据
                 networkMethod.haveNetWork();
             }
         }
@@ -51,7 +48,6 @@ public class NetworkBroadcastUtils {
         public interface NetworkMethod{
             void haveNetWork();
             void NoNetWork();
-            void mobileNetWork();
         }
     }
 
