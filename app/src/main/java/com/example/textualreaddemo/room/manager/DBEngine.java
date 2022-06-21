@@ -3,11 +3,11 @@ package com.example.textualreaddemo.room.manager;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.king.studyroomusernews.room.AppDatabase;
-import com.king.studyroomusernews.room.News;
-import com.king.studyroomusernews.room.NewsDao;
-import com.king.studyroomusernews.room.User;
-import com.king.studyroomusernews.room.UserDao;
+import com.example.textualreaddemo.room.AppDatabase;
+import com.example.textualreaddemo.room.News;
+import com.example.textualreaddemo.room.NewsDao;
+import com.example.textualreaddemo.room.User;
+import com.example.textualreaddemo.room.UserDao;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

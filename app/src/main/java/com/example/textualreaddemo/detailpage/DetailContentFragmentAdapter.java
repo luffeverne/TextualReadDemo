@@ -31,4 +31,14 @@ public class DetailContentFragmentAdapter extends FragmentStateAdapter {
         return detailContentFragmentList.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
+
+    @Override
+    public boolean containsItem(long itemId) {
+        return super.containsItem(itemId);
+    }
+
 }

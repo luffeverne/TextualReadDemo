@@ -6,6 +6,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener{
     //合格新闻id长度,VQ83OGT2N,S1655357985168(不合格），H9U4JBKA0552NSSC,EJA5MJQ30001875N（合格）
     final static int RIGHT_DETAIL_NEWS_LENGTH = 15;
     //管理新闻详情
@@ -32,15 +33,15 @@ public class DetailActivity extends AppCompatActivity {
     //新闻详情页面底部控件
     LinearLayout btns_bottom_detail;
     //新闻详情页面控制上一页，下一页的按钮
-    ImageButton btn_up,btn_down;
+    ImageButton btn_up,btn_down,btn_refresh;
     //记录当前的 DetailContentFragment
     DetailContentFragment currentFragment;
     //接收 NewsListPageFragment 传过来的新闻详情id
     String newsDetailDataFromHomepageID;
     //新闻详情id列表
     List<String> newsDetailDataIDs = new ArrayList<>();
-    //是否加载新新闻
-    Boolean flag = false;
+    //是否第一次进入该Activity
+    Boolean flag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +55,24 @@ public class DetailActivity extends AppCompatActivity {
         btns_bottom_detail = findViewById(R.id.btns_bottom_detail);
         btn_up = findViewById(R.id.btn_up);
         btn_down = findViewById(R.id.btn_down);
+        btn_refresh = findViewById(R.id.refresh);
+        btn_refresh.setOnClickListener(this);
 
+        loadFragments();
+    }
+
+    private void loadFragments() {
         //单例模式创建对应数量的 DetailContentFragment ,getNewsDetailDataID(): 获取合格的随机新闻id列表
         newsDetailDataIDs = getNewsDetailDataID();
+        Log.e("lance", "loadFragments: " + newsDetailDataIDs);
         for (int i = 0; i < newsDetailDataIDs.size(); i++) {
             detailContentFragmentList.add(DetailContentFragment.newInstance(newsDetailDataIDs.get(i),"1"));
         }
 
         adapter = new DetailContentFragmentAdapter(DetailActivity.this,detailContentFragmentList);
+        adapter.notifyDataSetChanged();
         viewPager2.setAdapter(adapter);
+
 
         //设置 viewPager2 页面监听 DetailContentFragment
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -88,8 +98,6 @@ public class DetailActivity extends AppCompatActivity {
                         }
                     }
                 });
-                System.out.println(position);
-                System.out.println(detailContentFragmentList.size());
             }
         });
     }
@@ -110,6 +118,7 @@ public class DetailActivity extends AppCompatActivity {
         String newsListDataIDRandom;
         Random random = new Random();
         newsListDataIDRandom = newsTypeIDs.get(random.nextInt(16));
+        Log.e("lance", "getNewsDetailDataID: " + newsListDataIDRandom);
         //非具体新闻列表
         List<NewsList.Data> newsListData = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -120,13 +129,28 @@ public class DetailActivity extends AppCompatActivity {
             Toast.makeText(DetailActivity.this,"新闻列表数据请求出现问题，请刷新",Toast.LENGTH_LONG).show();
         //新闻详情id列表
         List<String> newsDetailDataID = new ArrayList<>();
-        if (!newsDetailDataFromHomepageID.equals(newsListData.get(0).newsId))
-            newsDetailDataID.add(newsDetailDataFromHomepageID);
+        if (flag == true) {
+            if (!newsDetailDataFromHomepageID.equals(newsListData.get(0).newsId)) {
+                newsDetailDataID.add(newsDetailDataFromHomepageID);
+            }
+            flag = false;
+        }
         for (int i = 0; i < newsListData.size(); i++) {
             if (newsListData.get(i).newsId.length() > RIGHT_DETAIL_NEWS_LENGTH)
                 newsDetailDataID.add(newsListData.get(i).newsId);
         }
         return newsDetailDataID;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.refresh:
+                loadFragments();
+                break;
+            default:
+                break;
+        }
     }
 }
 
