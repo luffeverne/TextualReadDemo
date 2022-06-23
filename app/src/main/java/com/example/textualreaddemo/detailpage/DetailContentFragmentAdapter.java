@@ -7,17 +7,22 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * DetailContentFragmentAdapter 为 DetailActivity 里面 viewpager2 的适配器
  */
-public class DetailContentFragmentAdapter extends FragmentStateAdapter {
-    private List<DetailContentFragment> detailContentFragmentList;
+    public class DetailContentFragmentAdapter extends FragmentStateAdapter {
+    private List<DetailContentFragment> detailContentFragmentList = new ArrayList<>();
 
-    public DetailContentFragmentAdapter(@NonNull FragmentActivity fragmentActivity, List<DetailContentFragment> detailContentFragmentList) {
+    public DetailContentFragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
-        this.detailContentFragmentList = detailContentFragmentList;
+    }
+
+    public void setData(List<DetailContentFragment> fragmentList){
+        detailContentFragmentList.clear();
+        this.detailContentFragmentList = fragmentList;
     }
 
     @NonNull
@@ -33,7 +38,7 @@ public class DetailContentFragmentAdapter extends FragmentStateAdapter {
 
     @Override
     public long getItemId(int position) {
-        return super.getItemId(position);
+        return detailContentFragmentList.get(position).hashCode();
     }
 
     @Override

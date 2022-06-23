@@ -17,12 +17,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.textualreaddemo.MainActivity;
 import com.example.textualreaddemo.R;
 import com.example.textualreaddemo.basebean.newsdata.NewsListBean;
 import com.example.textualreaddemo.DetailActivity;
 import com.example.textualreaddemo.homepage.presenter.NewsListViewPresenter;
 import com.example.textualreaddemo.network.NewsDataUtility;
 import com.example.textualreaddemo.util.CardConfig;
+import com.example.textualreaddemo.util.NetworkBroadcastUtils;
 import com.example.textualreaddemo.util.SwipeCardCallBack;
 import com.example.textualreaddemo.util.SwipeCardLayoutManager;
 
@@ -38,15 +40,14 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
     private NewsListRecyclerViewAdapter adapter;
     private ProgressDialog progressDialog;
     private Activity activity;
+    private NetworkBroadcastUtils.MyConnectivityReceiver receiver;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_list_page,container,false);
 
-
         recyclerView = view.findViewById(R.id.news_list_recycler_view);
-
         activity = getActivity();//获取activity对象，充当上下文
 
         progressDialog = new ProgressDialog(activity);
@@ -55,14 +56,12 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
         progressDialog.setMessage("请稍后...");
 
         newsListViewPresenter = new NewsListViewPresenter(this);//创建P层对象
-        load();
-//        testD();
+
+        listenNetworkBroadcast();
+
         return view;
     }
 
-    private void load() {
-        newsListViewPresenter.getNewsListData(activity);
-    }
 
     @Override
     public void showProgress() {
@@ -84,8 +83,7 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
         }
     }
 
-    @Override
-    public void getDataFailure() {
+    private void getFromSP(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         String temp = sp.getString("NewsList",null);
         if (temp != null){
@@ -128,5 +126,32 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
             helper.attachToRecyclerView(recyclerView);
         }
 
+    }
+
+    private void listenNetworkBroadcast() {
+        //实例化工具类
+        NetworkBroadcastUtils utils=new NetworkBroadcastUtils();
+        //实例化网络广播监听
+        receiver= new NetworkBroadcastUtils.MyConnectivityReceiver();
+        //调用初始化 注册广播的方法
+        utils.GetNetWorkConnectivity(activity,receiver);
+        //广播的回调方法
+        receiver.setNetworkMethod(new NetworkBroadcastUtils.MyConnectivityReceiver.NetworkMethod() {
+            @Override
+            public void haveNetWork() {
+                //从网络获取数据
+                newsListViewPresenter.getNewsListData(activity);
+            }
+            @Override
+            public void NoNetWork() {
+                getFromSP();
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        activity.unregisterReceiver(receiver);
     }
 }

@@ -2,19 +2,23 @@ package com.example.textualreaddemo;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.textualreaddemo.homepage.MainViewAdapter;
 import com.example.textualreaddemo.homepage.mypage.MyPageFragment;
 import com.example.textualreaddemo.homepage.NewsListPageFragment;
 import com.example.textualreaddemo.homepage.searchpage.SearchPageFragment;
+import com.example.textualreaddemo.service.UpdateNewsService;
+import com.example.textualreaddemo.util.NetworkBroadcastUtils;
 
 /**
  * 主页登录跳转
- * 最后更改时间：2022-6-10 13:58
+ * 最后更改时间：2022-6-20 9:10
  * author: houdeng
  */
 
@@ -38,12 +42,22 @@ public class MainActivity extends AppCompatActivity{
         mainView = findViewById(R.id.main_view_container);
 
         // 给viewpager2控件设置适配器
+        setViewPager2Adapter();
+
+        //启动服务
+        Intent intent = new Intent(this, UpdateNewsService.class);
+        startService(intent);
+    }
+
+    private void setViewPager2Adapter() {
+
         adapter = new MainViewAdapter(this);
         mainView.setAdapter(adapter);
         adapter.addFragment(new MyPageFragment());
         adapter.addFragment(new NewsListPageFragment());
         adapter.addFragment(new SearchPageFragment());
         mainView.setCurrentItem(1);
+
     }
 
 }

@@ -48,7 +48,7 @@ public class NewsListModel implements INewsListModel{
                             editor.apply();
                             callBack.onSuccess();
                         }else {
-                            callBack.onFailure();
+                            callBack.onFailure(activity);
                         }
                     }
                 });

@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <ImageButton
+            android:id="@+id/btn_back"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:background="#00000000"
@@ -67,18 +68,21 @@
                 android:layout_width="150dp"
                 android:layout_height="match_parent"/>
             <ImageButton
+                android:id="@+id/btn_isLove"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_baseline_favorite_border_24"
                 android:layout_marginLeft="40dp"
                 android:layout_width="45dp"
                 android:layout_height="45dp"/>
             <ImageButton
+                android:id="@+id/btn_isCollected"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_baseline_star_border_24"
                 android:layout_marginLeft="25dp"
                 android:layout_width="45dp"
                 android:layout_height="45dp"/>
             <ImageButton
+                android:id="@+id/btn_comments"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_baseline_textsms_24"
                 android:layout_marginLeft="25dp"
