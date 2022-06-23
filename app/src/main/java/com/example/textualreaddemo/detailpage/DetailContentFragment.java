@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,9 @@ import android.widget.Toast;
 import com.example.textualreaddemo.R;
 import com.example.textualreaddemo.beanRetrofit.NewsDetail;
 import com.example.textualreaddemo.networkRetrofit.NewsUtility;
+import com.example.textualreaddemo.room.News;
+import com.example.textualreaddemo.room.manager.DBEngine;
+
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 import java.util.ArrayList;
@@ -26,11 +31,8 @@ public class DetailContentFragment extends Fragment {
     // DetailActivity 向 DetailContentFragment 通信（传递数据）时使用的参数
     private static final String ARG_DETAILNEWSID = "detailNewsID";
 
-    private static final String ARG_PARAM2 = "param2";
-
     // TODO: Rename and change types of parameters
     private String detailNewsID;
-    private String mParam2;
     private View rootView;
 
     // NestedScrollView 用于包裹新闻详情内容
@@ -41,6 +43,9 @@ public class DetailContentFragment extends Fragment {
     private StringBuilder stringBuilder;
     //新闻详情的数据
     private NewsDetail.Data newsDetailData;
+
+    private News news = new News();
+    private DBEngine dbEngine;
 
     public DetailContentFragment() {
         // Required empty public constructor
@@ -53,11 +58,10 @@ public class DetailContentFragment extends Fragment {
     }
 
     //单例模式
-    public static DetailContentFragment newInstance(String param1, String param2) {
+    public static DetailContentFragment newInstance(String param1) {
         DetailContentFragment fragment = new DetailContentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_DETAILNEWSID, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,10 +69,18 @@ public class DetailContentFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
+        dbEngine = new DBEngine(context);
+
         if (getArguments() != null) {
             detailNewsID = getArguments().getString(ARG_DETAILNEWSID);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        news.setNewsID(detailNewsID);
+        if (dbEngine.getNewsByNewsID(detailNewsID) == null) {
+            dbEngine.insertNews(news);
+        }
+        news = dbEngine.getNewsByNewsID(detailNewsID);
+
         //DetailActivity 传过来的新闻详情id
         //System.out.println(detailNewsID);
         for (int i = 0; i < 3; i++) {
@@ -103,6 +115,7 @@ public class DetailContentFragment extends Fragment {
 
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +124,7 @@ public class DetailContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e("lance", "onCreateView: " );
         rootView = inflater.inflate(R.layout.fragment_detail_content, container, false);
         nestedScrollView = rootView.findViewById(R.id.myNestedScrollView);
         title_detail = rootView.findViewById(R.id.title_detail);

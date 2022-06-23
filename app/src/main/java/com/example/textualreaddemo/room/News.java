@@ -3,6 +3,7 @@ package com.example.textualreaddemo.room;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -26,6 +27,10 @@ public class News {
 
     @ColumnInfo(name = "isHistory",typeAffinity = ColumnInfo.TEXT)
     private String isHistory;
+
+    @Ignore
+    public News() {
+    }
 
     public News(@NonNull String newsID, String userID, String isLike, String isCollected, String isCommented, String isHistory) {
         this.newsID = newsID;

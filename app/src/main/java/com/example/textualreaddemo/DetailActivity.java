@@ -7,9 +7,12 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.example.textualreaddemo.beanRetrofit.NewsList;
 import com.example.textualreaddemo.beanRetrofit.NewsTypes;
@@ -17,6 +20,9 @@ import com.example.textualreaddemo.detailpage.DetailContentFragment;
 import com.example.textualreaddemo.detailpage.DetailContentFragmentAdapter;
 import com.example.textualreaddemo.detailpage.IFragmentCallback;
 import com.example.textualreaddemo.networkRetrofit.NewsUtility;
+import com.example.textualreaddemo.room.News;
+import com.example.textualreaddemo.room.manager.DBEngine;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,13 +48,23 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     List<String> newsDetailDataIDs = new ArrayList<>();
     Boolean isLove = false,isCollected = false;
 
+    DBEngine dbEngine;
+
+    EditText et_detail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        initView();
+        loadFragments();
+    }
+    private void initView() {
         //接收 NewsListPageFragment 传过来的新闻详情id
         Intent intent = getIntent();
         newsDetailDataFromHomepageID = intent.getStringExtra("newsId");
+
+        dbEngine = new DBEngine(this);
 
         viewPager2 = findViewById(R.id.vp_detail);
         btn_back = findViewById(R.id.btn_back);
@@ -67,7 +83,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         btn_up.setOnClickListener(this);
         btn_down.setOnClickListener(this);
 
-        loadFragments();
+        et_detail = findViewById(R.id.et_detail);
+        et_detail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                Toast.makeText(DetailActivity.this,"评论成功:" + et_detail.getText().toString(),Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
     }
 
     private void loadFragments() {
@@ -76,9 +99,16 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         if (newsDetailDataIDs.size() <= 6) {
             newsDetailDataIDs.addAll(getNewsDetailDataID());
         }
+
+        //暂时把数据写死测试和数据库的联系
+        newsDetailDataIDs.clear();
+        newsDetailDataIDs.add("HAJ5PN2B0526K1KN");
+        newsDetailDataIDs.add("HAF1D0TP055229B6");
+        newsDetailDataIDs.add("HAG7Q85305159TSH");
+        //[, , , HAG7Q85305159TSH, HAJ5PN2B0526K1KN, HAI8A6NT003198EF, HAI5KA5N003198EF, HAFOFEG3003198EF, HAFO2FA5003198EF, HAFNU27B003198EF, HAFNQ9VG003198EF, HAFNEK8I003198EF, HAFM6BE1003198EF, HAIV6V0G0526K1KN]
         detailContentFragmentList.clear();
         for (int i = 0; i < newsDetailDataIDs.size(); i++) {
-            detailContentFragmentList.add(DetailContentFragment.newInstance(newsDetailDataIDs.get(i),"1"));
+            detailContentFragmentList.add(DetailContentFragment.newInstance(newsDetailDataIDs.get(i)));
         }
 
         adapter = new DetailContentFragmentAdapter(DetailActivity.this);
@@ -92,6 +122,17 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 super.onPageSelected(position);
                 currentFragment = detailContentFragmentList.get(position);
                 //通信接收当前 DetailContentFragment 发来其的滚动状态，然后对控件是否隐藏进行操作
+
+                News news = dbEngine.getNewsByNewsID(newsDetailDataIDs.get(position));
+                if ("ture".equals(news.getIsLike()))
+                    btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_24);
+                if ("false".equals(news.getIsLike()))
+                    btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+                if ("ture".equals(news.getIsCollected()))
+                    btn_isCollected.setImageResource(R.drawable.ic_baseline_star_24);
+                if ("false".equals(news.getIsCollected()))
+                    btn_isCollected.setImageResource(R.drawable.ic_baseline_star_border_24);
+
                 currentFragment.setFragmentCallback(new IFragmentCallback() {
                     @Override
                     public void sendMsgToActivity(String msg) {
@@ -173,19 +214,43 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(this,"last",Toast.LENGTH_LONG).show();
                 }
             case R.id.btn_isLove:
-                if (!isLove)
+            {
+                String detailNewsID = currentFragment.getArguments().getString("detailNewsID");
+                News news = new News();
+                news.setNewsID(detailNewsID);
+                if (!isLove) {
+                    news.setIsLike("ture");
+                    dbEngine.updateNews(news);
                     btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_24);
-                if (isLove)
+                    Log.e("lance", "onClick: " + dbEngine.getNewsByNewsID(detailNewsID));
+                }
+                if (isLove) {
+                    news.setIsLike("false");
+                    dbEngine.updateNews(news);
                     btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+                }
                 isLove = !isLove;
                 break;
+            }
             case R.id.btn_isCollected:
-                if (!isCollected)
+            {
+                String detailNewsID = currentFragment.getArguments().getString("detailNewsID");
+                News news = new News();
+                news.setNewsID(detailNewsID);
+                if (!isCollected) {
+                    news.setIsCollected("ture");
+                    dbEngine.updateNews(news);
                     btn_isCollected.setImageResource(R.drawable.ic_baseline_star_24);
-                if (isCollected)
+                    Log.e("lance", "onClick: " + dbEngine.getNewsByNewsID(detailNewsID));
+                }
+                if (isCollected) {
+                    news.setIsCollected("false");
+                    dbEngine.updateNews(news);
                     btn_isCollected.setImageResource(R.drawable.ic_baseline_star_border_24);
+                }
                 isCollected = !isCollected;
                 break;
+            }
             case R.id.btn_comments:
                 Toast.makeText(this,"comments",Toast.LENGTH_LONG).show();
                 break;
