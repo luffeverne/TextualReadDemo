@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.textualreaddemo.data.Code;
 import com.example.textualreaddemo.data.DBOpenHelper;
+import com.example.textualreaddemo.room.User;
+import com.example.textualreaddemo.room.manager.DBEngine;
 
 
 /**
@@ -25,13 +27,17 @@ import com.example.textualreaddemo.data.DBOpenHelper;
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     private String strShowCode;
-    private DBOpenHelper mDBOpenHelper;
+    //private DBOpenHelper mDBOpenHelper;
+    private DBEngine dbEngine;
     private Button mButtonRegister;
     private Button mButtonCancel;
+    private EditText mEditPhoneNumber;
     private EditText mEditUsername;
     private EditText mEditPassword;
     private EditText mEditConfirmPassword;
+
     private ImageView mIvShowCode;
+
     private EditText mEditInputCode;
 
 
@@ -43,7 +49,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         initView();
 
-        mDBOpenHelper = new DBOpenHelper(this);
+        //mDBOpenHelper = new DBOpenHelper(this);
+        dbEngine = new DBEngine(this);
 
         // 将验证码用图片的形式显示出来
         mIvShowCode.setImageBitmap(Code.getInstance().createBitmap());
@@ -55,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mButtonRegister = findViewById(R.id.btn_register);
         mButtonCancel = findViewById(R.id.btn_cancel);
         mIvShowCode = findViewById(R.id.btn_showCode);
+        mEditPhoneNumber = findViewById(R.id.text_phoneNumber);
         mEditUsername = findViewById(R.id.text_username);
         mEditPassword = findViewById(R.id.text_password);
         mEditConfirmPassword = findViewById(R.id.text_confirmPassword);
@@ -79,25 +87,38 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 strShowCode = Code.getInstance().getCode().toLowerCase();
                 break;
             case R.id.btn_register: // 注册
-                // 获取用户输入的用户名、密码
+                // 获取用户输入的手机号、用户名、密码
+                String userPhoneNumber = mEditPhoneNumber.getText().toString().trim();
                 String username = mEditUsername.getText().toString().trim();
                 String password = mEditPassword.getText().toString().trim();
                 String confirmPassword = mEditConfirmPassword.getText().toString().trim();
                 String inputCode = mEditInputCode.getText().toString().trim();
 
                 // 注册验证
-                if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(inputCode)) {
-                    if (!(password == confirmPassword)) {
+                if (userPhoneNumber.matches("\\d{11}") && !TextUtils.isEmpty(username) && !TextUtils.isEmpty(password) && strShowCode.equals(inputCode)) {
+                    if (password.equals(confirmPassword)) {
                         // 将用户名和密码加入到数据库中
-                        mDBOpenHelper.add(username, confirmPassword);
-                        // 注册成功了，进入主页
-                        Intent intent1 = new Intent(RegisterActivity.this, LoginActivity.class);
-                        startActivity(intent1);
-                        finish();
-                        Toast.makeText(RegisterActivity.this, "注册成功！", Toast.LENGTH_SHORT).show();
+                        //mDBOpenHelper.add(username, confirmPassword);
+                        if (dbEngine.getUserByUserID(userPhoneNumber) != null) {
+                            Toast.makeText(RegisterActivity.this,"该手机号号已被注册，返回登录或更改注册手机号",Toast.LENGTH_SHORT).show();
+                        } else {
+                            User user = new User();
+                            user.setUserID(userPhoneNumber);
+                            user.setName(username);
+                            user.setPassword(password);
+                            dbEngine.insertUsers(user);
+
+                            // 注册成功了，进入主页
+                            Intent intent1 = new Intent(RegisterActivity.this, LoginActivity.class);
+                            startActivity(intent1);
+                            finish();
+                            Toast.makeText(RegisterActivity.this, "注册成功！", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(RegisterActivity.this, "密码输入不一致，请重新输入！", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(RegisterActivity.this, "手机号或验证码不正确，或用户名，密码为空", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
