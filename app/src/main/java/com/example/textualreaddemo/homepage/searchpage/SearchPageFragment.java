@@ -21,8 +21,8 @@ import com.google.android.material.tabs.TabLayout;
 
 /**
  * 这里编写搜索主页
- * 最后更改时间：2022-6-11 20：34
- * @author houdeng
+ * 最后更改时间：2022-6-19 20：00
+ * @author houdeng、luffe
  */
 
 public class SearchPageFragment extends Fragment  {
@@ -50,7 +50,7 @@ public class SearchPageFragment extends Fragment  {
 
         mSearchView = view.findViewById(R.id.searchView);
         mListView = view.findViewById(R.id.listView);
-        mListView.setTextFilterEnabled(true);
+        mListView.setTextFilterEnabled(false);
 
 
         // 设置搜索文本监听
@@ -72,7 +72,7 @@ public class SearchPageFragment extends Fragment  {
             }
         });
 
-        //设置放置方向为横向
+        //设置放置方向为横向滚动
         concernedTab.setTabMode(TabLayout.MODE_SCROLLABLE);
         //tab绑定viewpager
         concernedTab.setupWithViewPager(viewPager);
