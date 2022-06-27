@@ -34,6 +34,8 @@ public class ConcernedPeopleBean {
 
         List<ConcernedPeopleBean> concernedPeople = new ArrayList<>();
 
+
+
         for (int i = 0; i < 7; i++) {
             ConcernedPeopleBean people = new ConcernedPeopleBean();
             people.setId(i);

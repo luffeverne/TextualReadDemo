@@ -38,12 +38,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/concerned_tab_layout"
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/concerned_news_list_viewpager"
+            android:id="@+id/news_list_viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />

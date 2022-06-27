@@ -7,14 +7,12 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.textualreaddemo.homepage.MainViewAdapter;
-import com.example.textualreaddemo.homepage.mypage.MyPageFragment;
 import com.example.textualreaddemo.homepage.NewsListPageFragment;
+import com.example.textualreaddemo.homepage.mypage.MyPageFragment;
 import com.example.textualreaddemo.homepage.searchpage.SearchPageFragment;
 import com.example.textualreaddemo.service.UpdateNewsService;
-import com.example.textualreaddemo.util.NetworkBroadcastUtils;
 
 /**
  * 主页登录跳转
