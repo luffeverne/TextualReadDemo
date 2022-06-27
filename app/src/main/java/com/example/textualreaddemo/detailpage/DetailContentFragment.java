@@ -10,12 +10,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.example.textualreaddemo.MyApplication;
 import com.example.textualreaddemo.R;
 import com.example.textualreaddemo.beanRetrofit.NewsDetail;
 import com.example.textualreaddemo.networkRetrofit.NewsUtility;
-import com.example.textualreaddemo.room.News;
+import com.example.textualreaddemo.room.HistoryNews;
 import com.example.textualreaddemo.room.manager.DBEngine;
 
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter;
@@ -29,23 +33,25 @@ import java.util.List;
 public class DetailContentFragment extends Fragment {
 
     // DetailActivity 向 DetailContentFragment 通信（传递数据）时使用的参数
-    private static final String ARG_DETAILNEWSID = "detailNewsID";
+    private static final String ARG_POSITIONINVIEWPAGER2 = "positionInViewPager2";
 
-    // TODO: Rename and change types of parameters
-    private String detailNewsID;
+    private int positionInViewPager2;
+
     private View rootView;
 
     // NestedScrollView 用于包裹新闻详情内容
     private NestedScrollView nestedScrollView;
     //新闻详情的标题，具体内容
     private TextView title_detail;
+    private ImageView coverImage;
     private HtmlTextView htmlTextView;
     private StringBuilder stringBuilder;
-    //新闻详情的数据
-    private NewsDetail.Data newsDetailData;
 
-    private News news = new News();
     private DBEngine dbEngine;
+
+    MyApplication myApplication;
+
+    NewsDetail.Data news;
 
     public DetailContentFragment() {
         // Required empty public constructor
@@ -61,7 +67,7 @@ public class DetailContentFragment extends Fragment {
     public static DetailContentFragment newInstance(String param1) {
         DetailContentFragment fragment = new DetailContentFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_DETAILNEWSID, param1);
+        args.putString(ARG_POSITIONINVIEWPAGER2, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,49 +75,41 @@ public class DetailContentFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
-        dbEngine = new DBEngine(context);
-
         if (getArguments() != null) {
-            detailNewsID = getArguments().getString(ARG_DETAILNEWSID);
+            positionInViewPager2 = Integer.parseInt(getArguments().getString(ARG_POSITIONINVIEWPAGER2));
         }
-        news.setNewsID(detailNewsID);
-        if (dbEngine.getNewsByNewsID(detailNewsID) == null) {
-            dbEngine.insertNews(news);
-        }
-        news = dbEngine.getNewsByNewsID(detailNewsID);
+        myApplication = (MyApplication) getActivity().getApplication();
+        dbEngine = new DBEngine(context);
+        news = myApplication.getNews().get(positionInViewPager2);
 
-        //DetailActivity 传过来的新闻详情id
-        //System.out.println(detailNewsID);
-        for (int i = 0; i < 3; i++) {
-            newsDetailData = NewsUtility.getNewsDetail(detailNewsID).getData();
-            if (newsDetailData != null) break;
+        if (dbEngine.getHistoryNewsByNewsID(news.getDocid()) == null) {
+            HistoryNews historyNews = new HistoryNews(news.getDocid());
+            historyNews.setNewsName(news.getTitle());
+            dbEngine.insertHistoryNews(historyNews);
         }
-        if (newsDetailData == null)
-            Toast.makeText(getActivity(),"请求超时，该新闻不存在",Toast.LENGTH_SHORT).show();
 
-        if (newsDetailData != null) {
-            if (newsDetailData.getImages() != null) {
-                if (newsDetailData.getImages().size() != 0) {
-                    //图片地址列表
-                    List<String> imgSrcs = new ArrayList<>();
-                    List<String> imgPositions = new ArrayList<>();
-                    for (int i = 0; i < newsDetailData.getImages().size(); i++) {
-                        imgSrcs.add(newsDetailData.getImages().get(i).imgSrc);
-                        imgPositions.add(newsDetailData.getImages().get(i).position);
-                    }
-                    String Content = newsDetailData.getContent();
-                    Solution solution = new Solution();
-                    stringBuilder = new StringBuilder("");
-                    for (int i = 0; i < imgSrcs.size(); i++) {
-                        int index = solution.strStr(Content,imgPositions.get(i));
-                        stringBuilder.append(Content.substring(0,index))
-                                .append("<img  src='" + imgSrcs.get(i) + "'/>");
-                        Content = Content.substring(imgPositions.get(i).length() + index);
-                    }
+        if (news.getImages() != null) {
+            if (news.getImages().size() != 0) {
+                //图片地址列表
+                List<String> imgSrcs = new ArrayList<>();
+                List<String> imgPositions = new ArrayList<>();
+                for (int i = 0; i < news.getImages().size(); i++) {
+                    imgSrcs.add(news.getImages().get(i).imgSrc);
+                    imgPositions.add(news.getImages().get(i).position);
+                }
+
+                String Content = news.getContent();
+                Solution solution = new Solution();
+                stringBuilder = new StringBuilder("");
+                for (int i = 0; i < imgSrcs.size(); i++) {
+                    int index = solution.strStr(Content,imgPositions.get(i));
+                    stringBuilder.append(Content.substring(0,index))
+                            .append("<img  src='" + imgSrcs.get(i) + "'/>");
+                    Content = Content.substring(imgPositions.get(i).length() + index);
                 }
             }
         }
+
 
     }
 
@@ -124,38 +122,47 @@ public class DetailContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("lance", "onCreateView: " );
         rootView = inflater.inflate(R.layout.fragment_detail_content, container, false);
+
         nestedScrollView = rootView.findViewById(R.id.myNestedScrollView);
+
         title_detail = rootView.findViewById(R.id.title_detail);
+
+        coverImage = rootView.findViewById(R.id.coverImage);
+
         htmlTextView = rootView.findViewById(R.id.html_textview);
 
-        if (newsDetailData != null) {
-            title_detail.setText(newsDetailData.getTitle());
-            if (newsDetailData.getImages() != null) {
-                if (newsDetailData.getImages().size() != 0) {
-                    htmlTextView.setHtml(stringBuilder.toString(),new HtmlHttpImageGetter(htmlTextView));
-                } else {
-                    htmlTextView.setHtml(newsDetailData.getContent(),new HtmlHttpImageGetter(htmlTextView));
-                }
-            } else {
-                htmlTextView.setHtml(newsDetailData.getContent(),new HtmlHttpImageGetter(htmlTextView));
+        title_detail.setText(news.getTitle());
+
+        if (news.getCover() != null) {
+            if (news.getCover() != null) {
+                Glide.with(this).load(news.getCover()).into(coverImage);
             }
         }
 
+        if (news.getImages() != null) {
+            if (news.getImages().size() != 0) {
+                htmlTextView.setHtml(stringBuilder.toString(),new HtmlHttpImageGetter(htmlTextView));
+            } else {
+                htmlTextView.setHtml(news.getContent(),new HtmlHttpImageGetter(htmlTextView));
+            }
+        } else {
+            htmlTextView.setHtml(news.getContent(),new HtmlHttpImageGetter(htmlTextView));
+        }
 
         //监听 nestedScrollView 的滑动和停止
-        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if(scrollY == 0 || scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())){
-                    //滑动到顶部，底部
-                    fragmentCallback.sendMsgToActivity("stopScrolling");
-                } else {
-                    fragmentCallback.sendMsgToActivity("scrolling");
+        if (positionInViewPager2 == myApplication.getNews().size() - 1) {
+            nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if(scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+                        //滑动底部
+                        //fragmentCallback.sendMsgToActivity("stopScrolling");
+                        myApplication.setCanDropLoad(true);
+                    }
                 }
-            }
-        });
+            });
+        }
         return rootView;
     }
 }

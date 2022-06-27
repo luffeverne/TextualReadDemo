@@ -16,20 +16,14 @@ public interface UserDao {
     @Query("Delete From User Where userID = :userID")
     void deleteUserByUserID(String userID);
 
-    @Query("Delete From User Where name = :userName")
-    void deleteUserByUserName(String userName);
+    @Query("Delete From user")
+    void deleteAllUsers();
 
     @Update
     void updateUsers(User... users);
 
     @Query("select * From User Where userID = (:userID)")
     User getUserByUserID(String userID);
-
-    @Query("select * From User Where name = :name")
-    User getUserByName(String name);
-
-    @Query("Delete From user")
-    void deleteAllUsers();
 
     @Query("Select * From user Order By userID Desc")
     List<User> getAllUsers();

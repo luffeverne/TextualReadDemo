@@ -8,19 +8,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.textualreaddemo.beanRetrofit.NewsDetail;
 import com.example.textualreaddemo.beanRetrofit.NewsList;
 import com.example.textualreaddemo.beanRetrofit.NewsTypes;
 import com.example.textualreaddemo.detailpage.DetailContentFragment;
 import com.example.textualreaddemo.detailpage.DetailContentFragmentAdapter;
 import com.example.textualreaddemo.detailpage.IFragmentCallback;
 import com.example.textualreaddemo.networkRetrofit.NewsUtility;
-import com.example.textualreaddemo.room.News;
+import com.example.textualreaddemo.room.CollectedNews;
 import com.example.textualreaddemo.room.manager.DBEngine;
 
 import java.util.ArrayList;
@@ -28,9 +31,14 @@ import java.util.List;
 import java.util.Random;
 
 
-public class DetailActivity extends AppCompatActivity implements View.OnClickListener{
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener,View.OnTouchListener{
+
+    int currentFragmentPosition;
+    private Boolean canDropLoad;
+    MyApplication myApplication;
+    List<NewsDetail.Data> news = new ArrayList<>();
     //合格新闻id长度,VQ83OGT2N,S1655357985168(不合格），H9U4JBKA0552NSSC,EJA5MJQ30001875N（合格）
-    final static int RIGHT_DETAIL_NEWS_LENGTH = 15;
+    //final static int RIGHT_DETAIL_NEWS_LENGTH = 15;
     //管理新闻详情
     ViewPager2 viewPager2;
     //viewPager2 的 DetailContentFragment
@@ -41,12 +49,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     //新闻详情页面控制上一页，下一页的按钮
     ImageButton btn_isLove,btn_isCollected,btn_comments,btn_back,btn_up,btn_down,btn_refresh;
     //记录当前的 DetailContentFragment
-    DetailContentFragment currentFragment;
+    //DetailContentFragment currentFragment;
     //接收 NewsListPageFragment 传过来的新闻详情id
-    String newsDetailDataFromHomepageID;
-    //新闻详情id列表
-    List<String> newsDetailDataIDs = new ArrayList<>();
-    Boolean isLove = false,isCollected = false;
+    String newsIDFromOtherActivity;
+    Boolean isLove = false;
 
     DBEngine dbEngine;
 
@@ -56,17 +62,28 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        initView();
-        loadFragments();
-    }
-    private void initView() {
         //接收 NewsListPageFragment 传过来的新闻详情id
         Intent intent = getIntent();
-        newsDetailDataFromHomepageID = intent.getStringExtra("newsId");
+        newsIDFromOtherActivity = intent.getStringExtra("newsId");
+        Log.e("lance", "onCreate: " + newsIDFromOtherActivity);
 
         dbEngine = new DBEngine(this);
 
+        myApplication = (MyApplication) getApplication();
+        news = getNews();
+        myApplication.setNews(news);
+        canDropLoad = myApplication.getCanDropLoad();
+
+        initView();
+
+        loadFragments();
+    }
+
+
+    private void initView() {
+
         viewPager2 = findViewById(R.id.vp_detail);
+
         btn_back = findViewById(R.id.btn_back);
         btns_bottom_detail = findViewById(R.id.btns_bottom_detail);
         btn_isLove = findViewById(R.id.btn_isLove);
@@ -75,6 +92,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         btn_up = findViewById(R.id.btn_up);
         btn_down = findViewById(R.id.btn_down);
         btn_refresh = findViewById(R.id.refresh);
+
         btn_isLove.setOnClickListener(this);
         btn_isCollected.setOnClickListener(this);
         btn_comments.setOnClickListener(this);
@@ -91,24 +109,65 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 return false;
             }
         });
+
+    }
+
+    private List<NewsDetail.Data> getNews() {
+        List<String> newsIDs = new ArrayList<>();
+
+        //新闻详情id列表
+
+        for (int i = 0; i < 10; i++) {
+            newsIDs.addAll(getNewsIDs());
+            if (newsIDs.size() == 0)continue;
+            if (!newsIDs.get(0).equals("此类型无详情id") && newsIDs.size() >= 6) {
+                break;
+            } else {
+                newsIDs.clear();
+            }
+        }
+        Log.e("lance", "getNews: " + newsIDs);
+        if (newsIDFromOtherActivity != null) {
+            if (!newsIDFromOtherActivity.equals(newsIDs.get(0))) {
+                newsIDs.add(0,newsIDFromOtherActivity);
+            }
+            newsIDFromOtherActivity = null;
+        } else {
+            Toast.makeText(DetailActivity.this,"其他 Activity 传来的 newsID 有问题或刷新",Toast.LENGTH_LONG).show();
+        }
+        Log.e("lance", "getNews: " + newsIDs);
+//        //暂时把数据写死测试和数据库的联系
+//        newsIDs.clear();
+//        newsIDs.add("HAJ5PN2B0526K1KN");
+//        newsIDs.add("HAF1D0TP055229B6");
+//        newsIDs.add("HAG7Q85305159TSH");
+
+        List<NewsDetail.Data> news = new ArrayList<>();
+        for (int i = 0; i < newsIDs.size(); i++) {
+            NewsDetail newsDetail = null;
+            for (int j = 0; j < 20; j++) {
+                newsDetail = NewsUtility.getNewsDetail(newsIDs.get(i));
+                if (newsDetail != null) break;
+            }
+            if (newsDetail == null) {
+                Toast.makeText(this,"新闻为空，服务器异常",Toast.LENGTH_LONG).show();
+            } else {
+                if (newsDetail.getData() == null) {
+                    Toast.makeText(this,"新闻 Data 为空，服务器异常",Toast.LENGTH_LONG).show();
+                } else {
+                    if (newsDetail.getData().getTitle() != null && newsDetail.getData().getContent() != null && newsDetail.getData().getSource() != null && newsDetail.getData().getPtime() != null && newsDetail.getData().getDocid() != null) {
+                        news.add(newsDetail.getData());
+                    }
+                }
+            }
+        }
+        return news;
     }
 
     private void loadFragments() {
         //单例模式创建对应数量的 DetailContentFragment ,getNewsDetailDataID(): 获取合格的随机新闻id列表
-        newsDetailDataIDs = getNewsDetailDataID();
-        if (newsDetailDataIDs.size() <= 6) {
-            newsDetailDataIDs.addAll(getNewsDetailDataID());
-        }
-
-        //暂时把数据写死测试和数据库的联系
-        newsDetailDataIDs.clear();
-        newsDetailDataIDs.add("HAJ5PN2B0526K1KN");
-        newsDetailDataIDs.add("HAF1D0TP055229B6");
-        newsDetailDataIDs.add("HAG7Q85305159TSH");
-        //[, , , HAG7Q85305159TSH, HAJ5PN2B0526K1KN, HAI8A6NT003198EF, HAI5KA5N003198EF, HAFOFEG3003198EF, HAFO2FA5003198EF, HAFNU27B003198EF, HAFNQ9VG003198EF, HAFNEK8I003198EF, HAFM6BE1003198EF, HAIV6V0G0526K1KN]
-        detailContentFragmentList.clear();
-        for (int i = 0; i < newsDetailDataIDs.size(); i++) {
-            detailContentFragmentList.add(DetailContentFragment.newInstance(newsDetailDataIDs.get(i)));
+        for (int i = 0; i < news.size(); i++) {
+            detailContentFragmentList.add(DetailContentFragment.newInstance(String.valueOf(i)));
         }
 
         adapter = new DetailContentFragmentAdapter(DetailActivity.this);
@@ -120,113 +179,110 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                currentFragment = detailContentFragmentList.get(position);
-                //通信接收当前 DetailContentFragment 发来其的滚动状态，然后对控件是否隐藏进行操作
 
-                News news = dbEngine.getNewsByNewsID(newsDetailDataIDs.get(position));
-                if ("ture".equals(news.getIsLike()))
-                    btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_24);
-                if ("false".equals(news.getIsLike()))
-                    btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_border_24);
-                if ("ture".equals(news.getIsCollected()))
+                currentFragmentPosition = position;
+
+                if (dbEngine.getCollectedNewsByNewsID(news.get(position).getDocid()) != null)
                     btn_isCollected.setImageResource(R.drawable.ic_baseline_star_24);
-                if ("false".equals(news.getIsCollected()))
+                else
                     btn_isCollected.setImageResource(R.drawable.ic_baseline_star_border_24);
-
-                currentFragment.setFragmentCallback(new IFragmentCallback() {
-                    @Override
-                    public void sendMsgToActivity(String msg) {
-                        if (msg.equals("scrolling")) {
-                            viewPager2.setUserInputEnabled(false);
-                            btn_up.setVisibility(View.GONE);
-                            btn_down.setVisibility(View.GONE);
-                            btns_bottom_detail.setVisibility(View.GONE);
-                        }
-                        if (msg.equals("stopScrolling")) {
-                            viewPager2.setUserInputEnabled(true);
-                            btn_up.setVisibility(View.VISIBLE);
-                            btn_down.setVisibility(View.VISIBLE);
-                            btns_bottom_detail.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
             }
         });
     }
 
-    private List<String> getNewsDetailDataID() {
+    private List<String> getNewsIDs() {
         //获取新闻详情id
         NewsTypes newsTypeData = null;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             newsTypeData = NewsUtility.getNewsTypes();
             if (newsTypeData != null) break;
         }
-        if (newsTypeData == null)
-            Toast.makeText(DetailActivity.this,"新闻类型数据请求出现问题，请刷新",Toast.LENGTH_LONG).show();
-        List<String> newsTypeIDs = new ArrayList<>();
-        for (int i = 0; i < newsTypeData.getData().size(); i++) {
-            newsTypeIDs.add(newsTypeData.getData().get(i).typeId);
-        }
-        String newsListDataIDRandom;
-        Random random = new Random();
-        newsListDataIDRandom = newsTypeIDs.get(random.nextInt(16));
-        //非具体新闻列表
-        List<NewsList.Data> newsListData = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            newsListData = NewsUtility.getNewsList(newsListDataIDRandom).getData();
-            if (newsListData != null) break;
-        }
-        if (newsListData == null)
-            Toast.makeText(DetailActivity.this,"新闻列表数据请求出现问题，请刷新",Toast.LENGTH_LONG).show();
-        //新闻详情id列表
-        List<String> newsDetailDataID = new ArrayList<>();
-        if (newsDetailDataFromHomepageID != null) {
-            if (!newsDetailDataFromHomepageID.equals(newsListData.get(0).newsId)) {
-                newsDetailDataID.add(newsDetailDataFromHomepageID);
-                newsDetailDataFromHomepageID = null;
+
+        if (newsTypeData == null) {
+            Toast.makeText(DetailActivity.this,"新闻类型数据为空，服务器异常",Toast.LENGTH_LONG).show();
+        } else {
+            if (newsTypeData.getData() == null) {
+                Toast.makeText(DetailActivity.this,"新闻类型数据 Data 为空，服务器异常",Toast.LENGTH_LONG).show();
+            } else {
+                if (newsTypeData.getData().size() == 0) {
+                    Toast.makeText(DetailActivity.this,"新闻类型数据 Data 长度为0，服务器异常",Toast.LENGTH_LONG).show();
+                } else {
+                    List<String> newsTypeIDs = new ArrayList<>();
+                    for (int i = 0; i < newsTypeData.getData().size(); i++) {
+                        newsTypeIDs.add(newsTypeData.getData().get(i).typeId);
+                    }
+                    String newsListDataIDRandom;
+                    Random random = new Random();
+                    newsListDataIDRandom = newsTypeIDs.get(random.nextInt(newsTypeIDs.size()));
+
+                    //非具体新闻列表
+                    NewsList newsList = null;
+                    for (int i = 0; i < 20; i++) {
+                        newsList = NewsUtility.getNewsList(newsListDataIDRandom);
+                        if (newsList != null) break;
+                    }
+                    if (newsList == null) {
+                        Toast.makeText(DetailActivity.this,"列表新闻为空，服务器异常",Toast.LENGTH_LONG).show();
+                    } else {
+                        if (newsList.getData() == null) {
+                            Toast.makeText(DetailActivity.this,"列表新闻 Data 为空，服务器异常",Toast.LENGTH_LONG).show();
+                        } else {
+                            if (newsList.getData().size() == 0) {
+                                Toast.makeText(DetailActivity.this,"列表新闻 Data 长度为0，服务器异常",Toast.LENGTH_LONG).show();
+                            } else {
+                                //新闻详情id列表
+                                List<String> newsIDs = new ArrayList<>();
+                                for (int i = 0; i < newsList.getData().size(); i++) {
+                                    newsIDs.add(newsList.getData().get(i).newsId);
+                                }
+                                return newsIDs;
+                            }
+                        }
+                    }
+                }
             }
         }
-        for (int i = 0; i < newsListData.size(); i++) {
-            if (newsListData.get(i).newsId.length() > RIGHT_DETAIL_NEWS_LENGTH)
-                newsDetailDataID.add(newsListData.get(i).newsId);
-        }
-        return newsDetailDataID;
+        return new ArrayList<>();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.refresh:
+                news = getNews();
+                myApplication.setNews(news);
+                canDropLoad = myApplication.getCanDropLoad();
+                detailContentFragmentList.clear();
                 loadFragments();
                 break;
             case R.id.btn_back:
                 this.finish();
                 break;
             case R.id.btn_up:
-                viewPager2.setCurrentItem(detailContentFragmentList.indexOf(currentFragment) - 1);
-                if (detailContentFragmentList.indexOf(currentFragment) - 1 == -1) {
+                viewPager2.setCurrentItem(currentFragmentPosition - 1);
+                if (currentFragmentPosition == 0) {
                     Toast.makeText(this,"first",Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.btn_down:
-                viewPager2.setCurrentItem(detailContentFragmentList.indexOf(currentFragment) + 1);
-                if (detailContentFragmentList.indexOf(currentFragment) + 1 == detailContentFragmentList.size()) {
+                viewPager2.setCurrentItem(currentFragmentPosition + 1);
+                if (currentFragmentPosition == detailContentFragmentList.size() - 1) {
                     Toast.makeText(this,"last",Toast.LENGTH_LONG).show();
                 }
             case R.id.btn_isLove:
             {
-                String detailNewsID = currentFragment.getArguments().getString("detailNewsID");
-                News news = new News();
-                news.setNewsID(detailNewsID);
+                //String detailNewsID = currentFragment.getArguments().getString("detailNewsID");
+//                News news = new News();
+//                news.setNewsID(detailNewsID);
                 if (!isLove) {
-                    news.setIsLike("ture");
-                    dbEngine.updateNews(news);
+//                    news.setIsLike("ture");
+//                    dbEngine.updateNews(news);
                     btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_24);
-                    Log.e("lance", "onClick: " + dbEngine.getNewsByNewsID(detailNewsID));
+//                    Log.e("lance", "onClick: " + dbEngine.getNewsByNewsID(detailNewsID));
                 }
                 if (isLove) {
-                    news.setIsLike("false");
-                    dbEngine.updateNews(news);
+//                    news.setIsLike("false");
+//                    dbEngine.updateNews(news);
                     btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                 }
                 isLove = !isLove;
@@ -234,21 +290,23 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             }
             case R.id.btn_isCollected:
             {
-                String detailNewsID = currentFragment.getArguments().getString("detailNewsID");
-                News news = new News();
-                news.setNewsID(detailNewsID);
-                if (!isCollected) {
-                    news.setIsCollected("ture");
-                    dbEngine.updateNews(news);
-                    btn_isCollected.setImageResource(R.drawable.ic_baseline_star_24);
-                    Log.e("lance", "onClick: " + dbEngine.getNewsByNewsID(detailNewsID));
-                }
-                if (isCollected) {
-                    news.setIsCollected("false");
-                    dbEngine.updateNews(news);
+                String detailNewsID = news.get(currentFragmentPosition).getDocid();
+                if (dbEngine.getCollectedNewsByNewsID(detailNewsID) == null) {
+                    NewsDetail newsDetail = null;
+                    for (int i = 0; i < 20; i++) {
+                        newsDetail = NewsUtility.getNewsDetail(detailNewsID);
+                        if (newsDetail != null ) {
+                            CollectedNews collectedNews = new CollectedNews(detailNewsID);
+                            collectedNews.setNewsName(newsDetail.getData().getTitle());
+                            dbEngine.insertCollectedNews(collectedNews);
+                            btn_isCollected.setImageResource(R.drawable.ic_baseline_star_24);
+                            break;
+                        }
+                    }
+                } else {
+                    dbEngine.deleteCollectedNewsByNewsID(detailNewsID);
                     btn_isCollected.setImageResource(R.drawable.ic_baseline_star_border_24);
                 }
-                isCollected = !isCollected;
                 break;
             }
             case R.id.btn_comments:
@@ -257,6 +315,44 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        float x1 = 0;
+        float x2 = 0;
+        float y1 = 0;
+        float y2 = 0;
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            x1 = motionEvent.getX();
+            y1 = motionEvent.getY();
+        }
+        if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+            x2 = motionEvent.getX();
+            y2 = motionEvent.getY();
+        }
+        if (x1 - x2 > 50) {
+            Toast.makeText(this,"left",Toast.LENGTH_LONG).show();
+            viewPager2.setUserInputEnabled(true);
+            btn_up.setVisibility(View.VISIBLE);
+            btn_down.setVisibility(View.VISIBLE);
+            btns_bottom_detail.setVisibility(View.VISIBLE);
+        }
+        if (x2 - x1 > 50) {
+            Toast.makeText(this,"right",Toast.LENGTH_LONG).show();
+            viewPager2.setUserInputEnabled(false);
+            btn_up.setVisibility(View.GONE);
+            btn_down.setVisibility(View.GONE);
+            btns_bottom_detail.setVisibility(View.GONE);
+        }
+        if (canDropLoad) {
+            if (y2 - y1 > 50) {
+                loadFragments();
+                Toast.makeText(this,"downLoad",Toast.LENGTH_LONG).show();
+            }
+        }
+
+        return true;
     }
 }
 

@@ -27,9 +27,11 @@
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/activity_register.xml" value="0.14583333333333334" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/activity_test.xml" value="0.15677083333333333" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/fragment_detail_content.xml" value="0.14010416666666667" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/fragment_my_page.xml" value="0.2078125" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/fragment_news_list_page.xml" value="0.25364583333333335" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/layout_news_list_no_picture_title_item.xml" value="0.25364583333333335" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/layout_news_list_picture_title_item.xml" value="0.25364583333333335" />
+        <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/mypagerecyclerview_item.xml" value="0.196875" />
         <entry key="..\:/AndroidProject/TextualReadTeam/app/src/main/res/layout/viewpager2_detailpage_item.xml" value="0.19427083333333334" />
       </map>
     </option>

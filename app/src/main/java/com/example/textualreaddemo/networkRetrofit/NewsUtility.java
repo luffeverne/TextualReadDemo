@@ -19,9 +19,9 @@ public class NewsUtility {
     public static NetbingService netbingService = retrofit.create(NetbingService.class);
     //解析返回的json数据
     public static com.google.gson.Gson gson = new com.google.gson.Gson();
-    //向该服务器申请数据时需要个人申请的 app_id 和 app_secret
-    public static final String APP_ID = "nfvilyqvqqnklscs";
-    public static final String APP_SECRET = "L2xacGh5U1B4WGFXeGdTWXQ3dVhsZz09";
+    //向该服务器申请数据时需要个人申请的 app_id 和 app_secret,过期了，就换个新的app_id=hmrdfmfmsxjysxkj&app_secret=M0lwY0daVVB2Wi9MamljMDIybTh1UT09
+    public static final String APP_ID = "hmrdfmfmsxjysxkj";
+    public static final String APP_SECRET = "M0lwY0daVVB2Wi9MamljMDIybTh1UT09";
     //记录返回的bean数据
     public static NewsTypes newsTypes = new NewsTypes();
     public static NewsList newsList = new NewsList();

@@ -42,10 +42,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;  // editor将数据写入SharedPreferences
 
+    MyApplication myApplication;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        myApplication = (MyApplication) this.getApplication();
 
         initView();
 
@@ -123,6 +127,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             editor.clear();  //若没有，清除SharedPreferences存储的信息
                         }
                         editor.apply();
+
+                        //为项目全局变量 User 赋值;
+                        myApplication.setUser(dbEngine.getUserByUserID(strPhoneNUmber));
 
                         // 登录成功, 跳转到新闻卡片布局主页
                         Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();

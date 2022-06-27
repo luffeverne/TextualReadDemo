@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.textualreaddemo.room.AppDatabase;
-import com.example.textualreaddemo.room.News;
-import com.example.textualreaddemo.room.NewsDao;
+import com.example.textualreaddemo.room.CollectedNews;
+import com.example.textualreaddemo.room.CollectedNewsDao;
+import com.example.textualreaddemo.room.HistoryNews;
+import com.example.textualreaddemo.room.HistoryNewsDao;
 import com.example.textualreaddemo.room.User;
 import com.example.textualreaddemo.room.UserDao;
 
@@ -14,12 +16,14 @@ import java.util.concurrent.ExecutionException;
 
 public class DBEngine {
     private UserDao userDao;
-    private NewsDao newsDao;
+    private CollectedNewsDao collectedNewsDao;
+    private HistoryNewsDao historyNewsDao;
 
     public DBEngine(Context context) {
         AppDatabase appDatabase = AppDatabase.getInstance(context);
+        collectedNewsDao = appDatabase.getCollectedNewsDao();
+        historyNewsDao = appDatabase.getHistoryNewsDao();
         userDao = appDatabase.getUserDao();
-        newsDao = appDatabase.getNewsDao();
     }
 
     public void insertUsers(User... users){
@@ -35,6 +39,41 @@ public class DBEngine {
         @Override
         protected Void doInBackground(User... users) {
             userDao.insertUsers(users);
+            return null;
+        }
+    }
+
+    public void insertCollectedNews(CollectedNews... collectedNews) {
+        new InsertCollectedNewsAsyncTack(collectedNewsDao).execute(collectedNews);
+    }
+    static class InsertCollectedNewsAsyncTack extends AsyncTask<CollectedNews,Void,Void> {
+
+        private CollectedNewsDao collectedNewsDao;
+
+        public InsertCollectedNewsAsyncTack(CollectedNewsDao collectedNewsDao) {
+            this.collectedNewsDao = collectedNewsDao;
+        }
+
+        @Override
+        protected Void doInBackground(CollectedNews... collectedNews) {
+            collectedNewsDao.insertCollectedNews(collectedNews);
+            return null;
+        }
+    }
+
+    public void insertHistoryNews(HistoryNews... historyNews) {
+        new InsertHistoryNewsAsyncTack(historyNewsDao).execute(historyNews);
+    }
+    static class InsertHistoryNewsAsyncTack extends AsyncTask<HistoryNews,Void,Void> {
+        private HistoryNewsDao historyNewsDao;
+
+        public InsertHistoryNewsAsyncTack(HistoryNewsDao historyNewsDao) {
+            this.historyNewsDao = historyNewsDao;
+        }
+
+        @Override
+        protected Void doInBackground(HistoryNews... historyNews) {
+            historyNewsDao.insertHistoryNews(historyNews);
             return null;
         }
     }
@@ -58,21 +97,92 @@ public class DBEngine {
         }
     }
 
-    public void deleteUserByUserName(String userName) {
-        new DeleteUserByUserNameAsyncTack(userDao,userName).execute();
+    public void deleteCollectedNewsByNewsID(String newsID) {
+        new DeleteCollectedNewsByNewsIDAsyncTack(collectedNewsDao,newsID).execute();
     }
-    static class DeleteUserByUserNameAsyncTack extends AsyncTask<Void,Void,Void> {
-        private UserDao userDao;
-        private String userName;
+    static class DeleteCollectedNewsByNewsIDAsyncTack extends AsyncTask<Void,Void,Void> {
+        private CollectedNewsDao collectedNewsDao;
+        private String newsID;
 
-        public DeleteUserByUserNameAsyncTack(UserDao userDao, String userName) {
-            this.userDao = userDao;
-            this.userName = userName;
+        public DeleteCollectedNewsByNewsIDAsyncTack(CollectedNewsDao collectedNewsDao, String newsID) {
+            this.collectedNewsDao = collectedNewsDao;
+            this.newsID = newsID;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            userDao.deleteUserByUserName(userName);
+            collectedNewsDao.deleteCollectedNewsByNewID(newsID);
+            return null;
+        }
+    }
+
+    public void deleteHistoryNewsByNewsID(String newsID) {
+        new DeleteHistoryNewsByNewsIDAsyncTack(historyNewsDao,newsID).execute();
+    }
+    static class DeleteHistoryNewsByNewsIDAsyncTack extends AsyncTask<Void,Void,Void> {
+        private HistoryNewsDao historyNewsDao;
+        private String newsID;
+
+        public DeleteHistoryNewsByNewsIDAsyncTack(HistoryNewsDao historyNewsDao, String newsID) {
+            this.historyNewsDao = historyNewsDao;
+            this.newsID = newsID;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            historyNewsDao.deleteHistoryNewsByNewsID(newsID);
+            return null;
+        }
+    }
+
+    public void deleteAllUsers() {
+        new DeleteAllUsersAsyncTack(userDao).execute();
+    }
+    static class DeleteAllUsersAsyncTack extends AsyncTask<Void,Void,Void> {
+        private UserDao userDao;
+
+        public DeleteAllUsersAsyncTack(UserDao userDao) {
+            this.userDao = userDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            userDao.deleteAllUsers();
+            return null;
+        }
+    }
+
+    public void deleteAllCollectedNews() {
+        new DeleteAllCollectedNewsAsyncTack(collectedNewsDao).execute();
+    }
+    static class DeleteAllCollectedNewsAsyncTack extends AsyncTask<Void,Void,Void> {
+
+        private CollectedNewsDao collectedNewsDao;
+
+        public DeleteAllCollectedNewsAsyncTack(CollectedNewsDao collectedNewsDao) {
+            this.collectedNewsDao = collectedNewsDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            collectedNewsDao.deleteAllCollectedNews();
+            return null;
+        }
+    }
+
+    public void deleteAllHistoryNews() {
+        new DeleteAllHistoryNewsAsyncTack(historyNewsDao).execute();
+    }
+    static class DeleteAllHistoryNewsAsyncTack extends AsyncTask<Void,Void,Void> {
+        private HistoryNewsDao historyNewsDao;
+
+        public DeleteAllHistoryNewsAsyncTack(HistoryNewsDao historyNewsDao) {
+            this.historyNewsDao = historyNewsDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            historyNewsDao.deleteAllHistoryNews();
             return null;
         }
     }
@@ -93,6 +203,7 @@ public class DBEngine {
             return null;
         }
     }
+
     public User getUserByUserID(String userID) {
         AsyncTask<Void, Void, User> task = new GetUserByUserIDAsyncTack(userDao, userID).execute();
         User user = null;
@@ -119,48 +230,61 @@ public class DBEngine {
             return userDao.getUserByUserID(userID);
         }
     }
-    public User getUserByName(String userName) {
-        AsyncTask<Void, Void, User> task = new GetUserByNameAsyncTack(userDao, userName).execute();
-        User user = null;
+
+    public CollectedNews getCollectedNewsByNewsID(String newsID) {
+        AsyncTask<Void, Void, CollectedNews> task = new GetCollectedNewsByNewsIDAsyncTack(collectedNewsDao, newsID).execute();
+        CollectedNews collectedNews = null;
         try {
-            user = task.get();
+            collectedNews = task.get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return user;
+        return collectedNews;
     }
-    static class GetUserByNameAsyncTack extends AsyncTask<Void,Void,User> {
-        private UserDao userDao;
-        private String userName;
+    static class GetCollectedNewsByNewsIDAsyncTack extends AsyncTask<Void,Void,CollectedNews> {
+        private CollectedNewsDao collectedNewsDao;
+        private String newsID;
 
-        public GetUserByNameAsyncTack(UserDao userDao, String userName) {
-            this.userDao = userDao;
-            this.userName = userName;
+        public GetCollectedNewsByNewsIDAsyncTack(CollectedNewsDao collectedNewsDao, String newsID) {
+            this.collectedNewsDao = collectedNewsDao;
+            this.newsID = newsID;
         }
 
         @Override
-        protected User doInBackground(Void... voids) {
-            return userDao.getUserByName(userName);
+        protected CollectedNews doInBackground(Void... voids) {
+            return collectedNewsDao.getCollectedNewsByNewsID(newsID);
         }
     }
-    public void deleteAllUsers() {
-        new DeleteAllUsersAsyncTack(userDao).execute();
-    }
-    static class DeleteAllUsersAsyncTack extends AsyncTask<Void,Void,Void> {
-        private UserDao userDao;
 
-        public DeleteAllUsersAsyncTack(UserDao userDao) {
-            this.userDao = userDao;
+    public HistoryNews getHistoryNewsByNewsID (String newsID) {
+        AsyncTask<Void, Void, HistoryNews> task = new GetHistoryNewsByNewsIDAsyncTack(historyNewsDao, newsID).execute();
+        HistoryNews historyNews = null;
+        try {
+            historyNews = task.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return historyNews;
+    }
+    static class GetHistoryNewsByNewsIDAsyncTack extends AsyncTask<Void,Void,HistoryNews>{
+        private HistoryNewsDao historyNewsDao;
+        private String newsID;
+
+        public GetHistoryNewsByNewsIDAsyncTack(HistoryNewsDao historyNewsDao, String newsID) {
+            this.historyNewsDao = historyNewsDao;
+            this.newsID = newsID;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            userDao.deleteAllUsers();
-            return null;
+        protected HistoryNews doInBackground(Void... voids) {
+            return historyNewsDao.getHistoryNewsByNewsID(newsID);
         }
     }
+
     public List<User> getAllUsers () {
         AsyncTask<Void, Void, List<User>> task = new GetAllUsersAsyncTack(userDao).execute();
         List<User> userList = null;
@@ -186,150 +310,53 @@ public class DBEngine {
         }
     }
 
-    public void insertNews(News... news) {
-        new InsertNewsAsyncTack(newsDao).execute(news);
-    }
-    static class InsertNewsAsyncTack extends AsyncTask<News,Void,Void> {
-        private NewsDao newsDao;
-
-        public InsertNewsAsyncTack(NewsDao newsDao) {
-            this.newsDao = newsDao;
-        }
-
-        @Override
-        protected Void doInBackground(News... news) {
-            newsDao.insertNews(news);
-            return null;
-        }
-    }
-
-    public void deleteNews(News... news) {
-        new DeleteNewsAsyncTack(newsDao).execute(news);
-    }
-    static class DeleteNewsAsyncTack extends AsyncTask<News,Void,Void> {
-        private NewsDao newsDao;
-
-        public DeleteNewsAsyncTack(NewsDao newsDao) {
-            this.newsDao = newsDao;
-        }
-
-        @Override
-        protected Void doInBackground(News... news) {
-            newsDao.deleteNews(news);
-            return null;
-        }
-    }
-
-    public void updateNews(News... news) {
-        new UpdateNewsAsyncTack(newsDao).execute(news);
-    }
-    static class UpdateNewsAsyncTack extends AsyncTask<News,Void,Void> {
-        private NewsDao newsDao;
-
-        public UpdateNewsAsyncTack(NewsDao newsDao) {
-            this.newsDao = newsDao;
-        }
-
-        @Override
-        protected Void doInBackground(News... news) {
-            newsDao.updateNews(news);
-            return null;
-        }
-    }
-
-    public News getNewsByNewsID(String newsID) {
-        AsyncTask<Void, Void, News> task = new GetNewsByNewsIDAsyncTack(newsDao, newsID).execute();
-        News news = null;
+    public List<CollectedNews> getAllCollectedNews() {
+        AsyncTask<Void, Void, List<CollectedNews>> task = new GetAllCollectedNewsAsyncTack(collectedNewsDao).execute();
+        List<CollectedNews> collectedNewsList = null;
         try {
-            news = task.get();
+            collectedNewsList = task.get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return news;
+        return collectedNewsList;
     }
-    static class GetNewsByNewsIDAsyncTack extends AsyncTask<Void,Void,News> {
-        private NewsDao newsDao;
-        private String newsID;
+    static class GetAllCollectedNewsAsyncTack extends AsyncTask<Void,Void,List<CollectedNews>> {
+        private CollectedNewsDao collectedNewsDao;
 
-        public GetNewsByNewsIDAsyncTack(NewsDao newsDao, String newsID) {
-            this.newsDao = newsDao;
-            this.newsID = newsID;
+        public GetAllCollectedNewsAsyncTack(CollectedNewsDao collectedNewsDao) {
+            this.collectedNewsDao = collectedNewsDao;
         }
 
         @Override
-        protected News doInBackground(Void... voids) {
-            return newsDao.getNewsByNewsID(newsID);
+        protected List<CollectedNews> doInBackground(Void... voids) {
+            return collectedNewsDao.getAllCollectedNews();
         }
     }
 
-    public News getNewsByUserID (String userID) {
-        AsyncTask<Void, Void, News> task = new GetNewsByUserIDAsyncTack(newsDao, userID).execute();
-        News news = null;
+    public List<HistoryNews> getAllHistoryNews () {
+        AsyncTask<Void, Void, List<HistoryNews>> task = new GetAllHistoryNewsAsyncTAck(historyNewsDao).execute();
+        List<HistoryNews> historyNewsList = null;
         try {
-            news = task.get();
+            historyNewsList = task.get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return news;
+        return historyNewsList;
     }
-    static class GetNewsByUserIDAsyncTack extends AsyncTask<Void,Void,News> {
-        private NewsDao newsDao;
-        private String userID;
+    static class GetAllHistoryNewsAsyncTAck extends AsyncTask<Void,Void,List<HistoryNews>> {
+        private HistoryNewsDao historyNewsDao;
 
-        public GetNewsByUserIDAsyncTack(NewsDao newsDao, String userID) {
-            this.newsDao = newsDao;
-            this.userID = userID;
+        public GetAllHistoryNewsAsyncTAck(HistoryNewsDao historyNewsDao) {
+            this.historyNewsDao = historyNewsDao;
         }
 
         @Override
-        protected News doInBackground(Void... voids) {
-            return newsDao.getNewsByUserID(userID);
-        }
-    }
-
-    public void deleteAllNews () {
-        new DeleteAllNewsAsyncTack(newsDao).execute();
-    }
-    static class DeleteAllNewsAsyncTack extends AsyncTask<Void,Void,Void> {
-        private NewsDao newsDao;
-
-        public DeleteAllNewsAsyncTack(NewsDao newsDao) {
-            this.newsDao = newsDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            newsDao.deleteAllNews();
-            return null;
-        }
-    }
-
-    public List<News> getAllNews() {
-        AsyncTask<Void, Void, List<News>> task = new GetAllNewsAsyncTack(newsDao).execute();
-        List<News> newsList = null;
-        try {
-            newsList = task.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return newsList;
-    }
-    static class GetAllNewsAsyncTack extends AsyncTask<Void,Void,List<News>> {
-        private NewsDao newsDao;
-
-        public GetAllNewsAsyncTack(NewsDao newsDao) {
-            this.newsDao = newsDao;
-        }
-
-        @Override
-        protected List<News> doInBackground(Void... voids) {
-            return newsDao.getAllNews();
+        protected List<HistoryNews> doInBackground(Void... voids) {
+            return historyNewsDao.getAllHistoryNews();
         }
     }
 }
