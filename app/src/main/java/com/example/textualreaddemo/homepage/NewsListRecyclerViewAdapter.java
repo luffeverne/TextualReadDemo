@@ -109,7 +109,6 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             itemTitle = itemView.findViewById(R.id.news_list_title);
             imageView = itemView.findViewById(R.id.news_list_image);
             itemText = itemView.findViewById(R.id.news_list_text);
-            lastTitle = itemView.findViewById(R.id.last_title);
         }
     }
 
@@ -126,7 +125,6 @@ public class NewsListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             super(itemView);
             itemTitle = itemView.findViewById(R.id.news_list_title);
             itemText = itemView.findViewById(R.id.news_list_text);
-            lastTitle = itemView.findViewById(R.id.last_title);
         }
     }
 

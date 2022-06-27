@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/back"
+        android:src="@drawable/water"
         android:scaleType="centerCrop"/>
 
     <LinearLayout
@@ -17,11 +17,11 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.example.textualreaddemo.newcradviewdesign.NewsListRecyclerView
+            android:layout_gravity="center"
             android:id="@+id/news_list_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp"/>
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 </FrameLayout>

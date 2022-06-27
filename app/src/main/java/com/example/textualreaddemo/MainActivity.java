@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity{
 
         adapter = new MainViewAdapter(this);
         mainView.setAdapter(adapter);
-        adapter.addFragment(new MyPageFragment());
-        adapter.addFragment(new NewsListPageFragment());
         adapter.addFragment(new SearchPageFragment());
+        adapter.addFragment(new NewsListPageFragment());
+        adapter.addFragment(new MyPageFragment());
         mainView.setCurrentItem(1);
 
     }
