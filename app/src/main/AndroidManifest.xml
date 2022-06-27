@@ -19,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TextualReadDemo"
         tools:targetApi="31">
+<<<<<<< HEAD
         <activity
             android:name=".DetailActivity"
             android:exported="true" />
@@ -26,6 +27,12 @@
             android:name=".LoginActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
+=======
+
+        <activity
+            android:name=".homepage.searchpage.SearchPageFragment1"
+            android:exported="true" >
+>>>>>>> d7b69a3214a9dce86d4ac195043c8d9c11210e6f
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,24 +40,42 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".DetailActivity"
+            android:exported="true" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
 
+<<<<<<< HEAD
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
+=======
+>>>>>>> d7b69a3214a9dce86d4ac195043c8d9c11210e6f
         </activity>
         <activity
             android:name=".RegisterActivity"
             android:exported="true"
+<<<<<<< HEAD
             android:windowSoftInputMode="adjustPan"></activity>
+=======
+            android:windowSoftInputMode="adjustPan" />
+>>>>>>> d7b69a3214a9dce86d4ac195043c8d9c11210e6f
 
         <service
             android:name=".service.UpdateNewsService"
             android:enabled="true"
+<<<<<<< HEAD
             android:exported="true"></service>
+=======
+            android:exported="true" />
+>>>>>>> d7b69a3214a9dce86d4ac195043c8d9c11210e6f
     </application>
 
 </manifest>

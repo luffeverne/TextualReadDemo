@@ -25,7 +25,7 @@ import okhttp3.Response;
  */
 public class NewsListModel implements INewsListModel{
 
-    private final String NEWS_URL = "https://www.mxnzp.com/api/news/list?typeId=514&page=1&app_id=hmrdfmfmsxjysxkj&app_secret=M0lwY0daVVB2Wi9MamljMDIybTh1UT09";
+    public static final String NEWS_URL = "https://www.mxnzp.com/api/news/list?typeId=514&page=1&app_id=hmrdfmfmsxjysxkj&app_secret=M0lwY0daVVB2Wi9MamljMDIybTh1UT09";
 
     @Override
     public void getNewsListData(Activity activity , CallBack callBack) {

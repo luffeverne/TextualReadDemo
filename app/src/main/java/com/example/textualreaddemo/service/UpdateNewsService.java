@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.textualreaddemo.basebean.newsdata.NewsListBean;
+import com.example.textualreaddemo.homepage.model.NewsListModel;
 import com.example.textualreaddemo.network.HttpUtil;
 import com.example.textualreaddemo.network.NewsDataUtility;
 
@@ -23,8 +24,6 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class UpdateNewsService extends Service {
-
-    private final String NEWS_URL = "https://www.mxnzp.com/api/news/list?typeId=514&page=1&app_id=hmrdfmfmsxjysxkj&app_secret=M0lwY0daVVB2Wi9MamljMDIybTh1UT09";
 
     @Nullable
     @Override
@@ -37,7 +36,7 @@ public class UpdateNewsService extends Service {
         updateNewsList();
         //设置定时器
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int anHour = 2 * 60 * 60 * 1000;        //1 小时
+        int anHour = 2 * 60 * 60 * 1000;        //2 小时
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
         Intent i = new Intent(this, UpdateNewsService.class);
         PendingIntent pi = PendingIntent.getService(this,0,i,0);
@@ -50,7 +49,7 @@ public class UpdateNewsService extends Service {
      * 更新新闻信息
      */
     private void updateNewsList() {
-        HttpUtil.sendOkHttpRequest(NEWS_URL, new Callback() {
+        HttpUtil.sendOkHttpRequest(NewsListModel.NEWS_URL, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();

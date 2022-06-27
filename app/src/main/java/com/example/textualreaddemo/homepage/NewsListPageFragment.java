@@ -14,19 +14,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.textualreaddemo.MainActivity;
-import com.example.textualreaddemo.R;
-import com.example.textualreaddemo.basebean.newsdata.NewsListBean;
 import com.example.textualreaddemo.DetailActivity;
+import com.example.textualreaddemo.R;
+import com.example.textualreaddemo.basebean.newsdata.PictureBean;
 import com.example.textualreaddemo.homepage.presenter.NewsListViewPresenter;
-import com.example.textualreaddemo.network.NewsDataUtility;
-import com.example.textualreaddemo.util.CardConfig;
+import com.example.textualreaddemo.newcradviewdesign.ItemAdapter;
+import com.example.textualreaddemo.newcradviewdesign.NewsListLayoutManager;
+import com.example.textualreaddemo.newcradviewdesign.NewsListRecyclerView;
+import com.example.textualreaddemo.newcradviewdesign.SetPictureUtil;
 import com.example.textualreaddemo.util.NetworkBroadcastUtils;
-import com.example.textualreaddemo.util.SwipeCardCallBack;
-import com.example.textualreaddemo.util.SwipeCardLayoutManager;
+
+import java.util.List;
 
 /**
  * 这里编写新闻简讯列表主页
@@ -35,9 +38,11 @@ import com.example.textualreaddemo.util.SwipeCardLayoutManager;
  */
 public class NewsListPageFragment extends Fragment implements INewsListView{
 
+    private SetPictureUtil setPictureUtil;
+
     private NewsListViewPresenter newsListViewPresenter;
-    private RecyclerView recyclerView;
-    private NewsListRecyclerViewAdapter adapter;
+    private NewsListRecyclerView recyclerView;
+    private ItemAdapter adapter;
     private ProgressDialog progressDialog;
     private Activity activity;
     private NetworkBroadcastUtils.MyConnectivityReceiver receiver;
@@ -49,6 +54,7 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
 
         recyclerView = view.findViewById(R.id.news_list_recycler_view);
         activity = getActivity();//获取activity对象，充当上下文
+        setPictureUtil = new SetPictureUtil(activity);//初始化工具类
 
         progressDialog = new ProgressDialog(activity);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -79,7 +85,7 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         String temp = sp.getString("NewsList",null);
         if (temp != null){
-            testD(temp);
+            initView(temp);
         }
     }
 
@@ -87,45 +93,40 @@ public class NewsListPageFragment extends Fragment implements INewsListView{
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         String temp = sp.getString("NewsList",null);
         if (temp != null){
-            testD(temp);
+            initView(temp);
         }else {
             Toast.makeText(activity, "无缓存，请重新获取", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void testD(String temp) {
-        NewsListBean newsListBean = NewsDataUtility.handleNewsListResponse(temp);
-        //判断数据是否正确
-        if (newsListBean != null && "数据返回成功！".equals(newsListBean.getMsg())) {
-            SwipeCardLayoutManager swmanamger = new SwipeCardLayoutManager(activity);
-            recyclerView.setLayoutManager(swmanamger);
-            adapter = new NewsListRecyclerViewAdapter(activity);
-
-            //设置数据
-            adapter.setData(newsListBean.getData());
-            //设置点击事件
-            adapter.setOnItemClickListener(new NewsListRecyclerViewAdapter.MyOnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(activity, DetailActivity.class);
-                            intent.putExtra("newsId", newsListBean.getData().get(position).getNewsId());
-                            activity.startActivity(intent);
-                        }
-                    });
-                }
-            });
-            recyclerView.setAdapter(adapter);
-            //配置布局信息文件
-            CardConfig.initConfig(activity);
-            //设置触摸效果
-            ItemTouchHelper.Callback callback = new SwipeCardCallBack(newsListBean.getData(), adapter);
-            ItemTouchHelper helper = new ItemTouchHelper(callback);
-            helper.attachToRecyclerView(recyclerView);
-        }
-
+    private void initView(String body){
+        List<PictureBean> pictureList = setPictureUtil.getPictureList(body);
+        adapter = new ItemAdapter();
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new NewsListLayoutManager(activity,RecyclerView.HORIZONTAL,false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        //滑动监听
+        LinearSnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+        /**
+         * 点击屏幕中的非居中位置时，可以使点击的项目平滑移动至屏幕中央
+         */
+        adapter.setOnItemClickListener(new ItemAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int pos) {
+                recyclerView.smoothScrollToPosition(pos);
+                Intent intent = new Intent(activity, DetailActivity.class);
+                intent.putExtra("newsId",pictureList.get(pos).getId());
+                startActivity(intent);
+            }
+        });
+        adapter.setDataList(pictureList);
     }
 
     private void listenNetworkBroadcast() {
