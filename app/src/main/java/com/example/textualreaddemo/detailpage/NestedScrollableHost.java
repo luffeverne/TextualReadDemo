@@ -17,6 +17,7 @@ package com.example.textualreaddemo.detailpage;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -93,13 +94,16 @@ public final class NestedScrollableHost extends FrameLayout {
 
         return flag;
     }
-//这个办法不行，重写下面那个方法分发view事件
+
+    //这个办法不行，重写下面那个方法分发view事件
 //    @Override
 //    public boolean onInterceptTouchEvent(@NotNull MotionEvent e) {
 //        Intrinsics.checkNotNullParameter(e, "e");
 //        this.handleInterceptTouchEvent(e);
-//        return super.onInterceptTouchEvent(e);
+//        Log.e("lance", "onInterceptTouchEvent: ");
+//        return true;
 //    }
+
 
     //重写下面方法分发事件
     @Override

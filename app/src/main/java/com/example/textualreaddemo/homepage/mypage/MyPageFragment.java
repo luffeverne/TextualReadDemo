@@ -1,15 +1,13 @@
 package com.example.textualreaddemo.homepage.mypage;
 
-import static android.content.Context.MODE_PRIVATE;
-
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,9 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.textualreaddemo.DetailActivity;
+import com.example.textualreaddemo.LoginActivity;
 import com.example.textualreaddemo.MyApplication;
 import com.example.textualreaddemo.R;
 import com.example.textualreaddemo.room.CollectedNews;
+import com.example.textualreaddemo.room.HistoryNews;
 import com.example.textualreaddemo.room.User;
 import com.example.textualreaddemo.room.manager.DBEngine;
 
@@ -34,7 +34,7 @@ import java.util.List;
 public class MyPageFragment extends Fragment implements View.OnClickListener{
 
 
-    TextView my_realName,personal_introduction,attention_author,collection_news,history_news,current_tv;
+    TextView my_realName,personal_introduction,attention_author,collection_news,history_news,current_tv,switch_account,log_out;
     ImageView my_head_photo;
     MyApplication myApplication;
     User user;
@@ -44,7 +44,9 @@ public class MyPageFragment extends Fragment implements View.OnClickListener{
     DBEngine dbEngine;
 
     List<CollectedNews> collectedNews = new ArrayList<>();
-    List<String> newsItemList = new ArrayList<>();
+    List<HistoryNews> historyNews = new ArrayList<>();
+    List<String> itemList = new ArrayList<>();
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,22 +84,10 @@ public class MyPageFragment extends Fragment implements View.OnClickListener{
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new MyPageRecyclerViewAdapter(getContext());
 
-        collectedNews = dbEngine.getAllCollectedNews();
-        for (CollectedNews c:
-                collectedNews) {
-            newsItemList.add(c.getNewsName());
-        }
-        adapter.setData(newsItemList);
-        adapter.setOnRecyclerItemClickListen(new MyPageRecyclerViewAdapter.OnRecyclerItemClickListener() {
-            @Override
-            public void OnRecyclerItemClick(int position) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("newsID",collectedNews.get(position).getNewsID());
-                startActivity(intent);
-            }
-        });
-        recyclerView.setAdapter(adapter);
-
+        switch_account = rootView.findViewById(R.id.switch_account);
+        switch_account.setOnClickListener(this);
+        log_out = rootView.findViewById(R.id.log_out);
+        log_out.setOnClickListener(this);
 
         return rootView;
     }
@@ -105,24 +95,15 @@ public class MyPageFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
-        collectedNews = dbEngine.getAllCollectedNews();
-        newsItemList.clear();
-        for (CollectedNews c:
-                collectedNews) {
-            newsItemList.add(c.getNewsName());
+        if (current_tv == collection_news) {
+            loadCollectedNews();
         }
-        adapter.setData(newsItemList);
-        //adapter.notifyDataSetChanged();
-        adapter.setOnRecyclerItemClickListen(new MyPageRecyclerViewAdapter.OnRecyclerItemClickListener() {
-            @Override
-            public void OnRecyclerItemClick(int position) {
-                Log.e("lance", "OnRecyclerItemClick: " + collectedNews.get(position).getNewsID());
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("newsId",collectedNews.get(position).getNewsID());
-                startActivity(intent);
-            }
-        });
-        recyclerView.setAdapter(adapter);
+        if (current_tv == history_news) {
+            loadHistoryNews();
+        }
+        if (current_tv == attention_author) {
+            loadAttentionAuthor();
+        }
     }
 
     @Override
@@ -146,17 +127,98 @@ public class MyPageFragment extends Fragment implements View.OnClickListener{
                 current_tv.setBackgroundResource(R.color.teal_200);
                 loadHistoryNews();
                 break;
+            case R.id.switch_account:
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                break;
+            case R.id.log_out:
+                AlertDialog alertDialog2 = new AlertDialog.Builder(getActivity())
+                        .setTitle("是否退出资讯阅读APP")
+                        .setIcon(R.drawable.ic_baseline_warning_24)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加"Yes"按钮
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                getActivity().finish();
+                                android.os.Process.killProcess(android.os.Process.myPid());
+                                System.exit(0);
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {//添加取消
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(getActivity(), "已经取消退出", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .create();
+                alertDialog2.show();
+                break;
             default:
                 break;
         }
     }
 
     private void loadAttentionAuthor() {
+//        historyNews = dbEngine.getAllHistoryNews();
+        itemList.clear();
+//        for (HistoryNews h:
+//                historyNews) {
+//            newsItemList.add(h.getNewsName());
+//        }
+        itemList.add("testAuthor1");
+        itemList.add("testAuthor2");
+        itemList.add("testAuthor3");
+        adapter.setData(itemList);
+        //adapter.notifyDataSetChanged();
+        adapter.setOnRecyclerItemClickListen(new MyPageRecyclerViewAdapter.OnRecyclerItemClickListener() {
+            @Override
+            public void OnRecyclerItemClick(int position) {
+//                Log.e("lance", "OnRecyclerItemClick: " + historyNews.get(position).getNewsID());
+//                Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                intent.putExtra("newsId",historyNews.get(position).getNewsID());
+//                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(adapter);
     }
 
     private void loadHistoryNews() {
+        historyNews = dbEngine.getAllHistoryNews();
+        itemList.clear();
+        for (HistoryNews h:
+                historyNews) {
+            itemList.add(h.getNewsName());
+        }
+        adapter.setData(itemList);
+        //adapter.notifyDataSetChanged();
+        adapter.setOnRecyclerItemClickListen(new MyPageRecyclerViewAdapter.OnRecyclerItemClickListener() {
+            @Override
+            public void OnRecyclerItemClick(int position) {
+                Log.e("lance", "OnRecyclerItemClick: " + historyNews.get(position).getNewsID());
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("newsId",historyNews.get(position).getNewsID());
+                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(adapter);
     }
 
     private void loadCollectedNews() {
+        collectedNews = dbEngine.getAllCollectedNews();
+        itemList.clear();
+        for (CollectedNews c:
+                collectedNews) {
+            itemList.add(c.getNewsName());
+        }
+        adapter.setData(itemList);
+        //adapter.notifyDataSetChanged();
+        adapter.setOnRecyclerItemClickListen(new MyPageRecyclerViewAdapter.OnRecyclerItemClickListener() {
+            @Override
+            public void OnRecyclerItemClick(int position) {
+                Log.e("lance", "OnRecyclerItemClick: " + collectedNews.get(position).getNewsID());
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("newsId",collectedNews.get(position).getNewsID());
+                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(adapter);
     }
 }

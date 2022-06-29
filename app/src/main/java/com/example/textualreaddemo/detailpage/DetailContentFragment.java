@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ public class DetailContentFragment extends Fragment {
     private TextView title_detail;
     private ImageView coverImage;
     private HtmlTextView htmlTextView;
+    private WebView webView;
     private StringBuilder stringBuilder;
 
     private DBEngine dbEngine;
@@ -98,14 +100,14 @@ public class DetailContentFragment extends Fragment {
                     imgPositions.add(news.getImages().get(i).position);
                 }
 
-                String Content = news.getContent();
+                String content = news.getContent();
                 Solution solution = new Solution();
                 stringBuilder = new StringBuilder("");
                 for (int i = 0; i < imgSrcs.size(); i++) {
-                    int index = solution.strStr(Content,imgPositions.get(i));
-                    stringBuilder.append(Content.substring(0,index))
+                    int index = solution.strStr(content,imgPositions.get(i));
+                    stringBuilder.append(content.substring(0,index))
                             .append("<img  src='" + imgSrcs.get(i) + "'/>");
-                    Content = Content.substring(imgPositions.get(i).length() + index);
+                    content = content.substring(imgPositions.get(i).length() + index);
                 }
             }
         }
@@ -130,7 +132,8 @@ public class DetailContentFragment extends Fragment {
 
         coverImage = rootView.findViewById(R.id.coverImage);
 
-        htmlTextView = rootView.findViewById(R.id.html_textview);
+        //htmlTextView = rootView.findViewById(R.id.html_textview);
+        webView = rootView.findViewById(R.id.webView);
 
         title_detail.setText(news.getTitle());
 
@@ -142,12 +145,19 @@ public class DetailContentFragment extends Fragment {
 
         if (news.getImages() != null) {
             if (news.getImages().size() != 0) {
-                htmlTextView.setHtml(stringBuilder.toString(),new HtmlHttpImageGetter(htmlTextView));
+                //这里出现过一次空指针异常，不知道原因。
+                String content = stringBuilder.toString();
+                content = content.replace("<img", "<img style='max-width:100%;height:auto'");
+                webView.loadData(content,"text/html","UTF-8");
             } else {
-                htmlTextView.setHtml(news.getContent(),new HtmlHttpImageGetter(htmlTextView));
+                String content = news.getContent();
+                content = content.replace("<img", "<img style='max-width:100%;height:auto'");
+                webView.loadData(content,"text/html","UTF-8");
             }
         } else {
-            htmlTextView.setHtml(news.getContent(),new HtmlHttpImageGetter(htmlTextView));
+            String content = news.getContent();
+            content = content.replace("<img", "<img style='max-width:100%;height:auto'");
+            webView.loadData(content,"text/html","UTF-8");
         }
 
         //监听 nestedScrollView 的滑动和停止
@@ -158,6 +168,7 @@ public class DetailContentFragment extends Fragment {
                     if(scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
                         //滑动底部
                         //fragmentCallback.sendMsgToActivity("stopScrolling");
+                        Toast.makeText(getContext(),"最后一页的底部",Toast.LENGTH_LONG).show();
                         myApplication.setCanDropLoad(true);
                     }
                 }

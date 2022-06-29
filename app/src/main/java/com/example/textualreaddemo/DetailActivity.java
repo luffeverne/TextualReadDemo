@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,15 +27,20 @@ import com.example.textualreaddemo.networkRetrofit.NewsUtility;
 import com.example.textualreaddemo.room.CollectedNews;
 import com.example.textualreaddemo.room.manager.DBEngine;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import kotlin.jvm.internal.Intrinsics;
 
-public class DetailActivity extends AppCompatActivity implements View.OnClickListener,View.OnTouchListener{
+
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener{
+
 
     int currentFragmentPosition;
-    private Boolean canDropLoad;
+
     MyApplication myApplication;
     List<NewsDetail.Data> news = new ArrayList<>();
     //合格新闻id长度,VQ83OGT2N,S1655357985168(不合格），H9U4JBKA0552NSSC,EJA5MJQ30001875N（合格）
@@ -62,6 +68,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
         //接收 NewsListPageFragment 传过来的新闻详情id
         Intent intent = getIntent();
         newsIDFromOtherActivity = intent.getStringExtra("newsId");
@@ -70,9 +77,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         dbEngine = new DBEngine(this);
 
         myApplication = (MyApplication) getApplication();
-        news = getNews();
+
+        for (int i = 0; i < 20; i++) {
+            news.addAll(getNews());
+            if (news.size() >=6) {
+                break;
+            }
+        }
         myApplication.setNews(news);
-        canDropLoad = myApplication.getCanDropLoad();
 
         initView();
 
@@ -126,7 +138,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 newsIDs.clear();
             }
         }
-        Log.e("lance", "getNews: " + newsIDs);
+
         if (newsIDFromOtherActivity != null) {
             if (!newsIDFromOtherActivity.equals(newsIDs.get(0))) {
                 newsIDs.add(0,newsIDFromOtherActivity);
@@ -135,12 +147,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         } else {
             Toast.makeText(DetailActivity.this,"其他 Activity 传来的 newsID 有问题或刷新",Toast.LENGTH_LONG).show();
         }
-        Log.e("lance", "getNews: " + newsIDs);
-//        //暂时把数据写死测试和数据库的联系
-//        newsIDs.clear();
-//        newsIDs.add("HAJ5PN2B0526K1KN");
-//        newsIDs.add("HAF1D0TP055229B6");
-//        newsIDs.add("HAG7Q85305159TSH");
+
 
         List<NewsDetail.Data> news = new ArrayList<>();
         for (int i = 0; i < newsIDs.size(); i++) {
@@ -155,12 +162,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 if (newsDetail.getData() == null) {
                     Toast.makeText(this,"新闻 Data 为空，服务器异常",Toast.LENGTH_LONG).show();
                 } else {
-                    if (newsDetail.getData().getTitle() != null && newsDetail.getData().getContent() != null && newsDetail.getData().getSource() != null && newsDetail.getData().getPtime() != null && newsDetail.getData().getDocid() != null) {
+                    if (!newsDetail.getData().getTitle().equals("") && !newsDetail.getData().getContent().equals("") && !newsDetail.getData().getSource().equals("") && !newsDetail.getData().getPtime().equals("") && !newsDetail.getData().getDocid().equals("")) {
                         news.add(newsDetail.getData());
                     }
                 }
             }
         }
+        Log.e("lance", "getNews: " + news.size() );
         return news;
     }
 
@@ -249,9 +257,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.refresh:
-                news = getNews();
+                news.clear();
+                for (int i = 0; i < 20; i++) {
+                    news.addAll(getNews());
+                    if (news.size() >=6) {
+                        break;
+                    }
+                }
                 myApplication.setNews(news);
-                canDropLoad = myApplication.getCanDropLoad();
                 detailContentFragmentList.clear();
                 loadFragments();
                 break;
@@ -271,18 +284,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 }
             case R.id.btn_isLove:
             {
-                //String detailNewsID = currentFragment.getArguments().getString("detailNewsID");
-//                News news = new News();
-//                news.setNewsID(detailNewsID);
                 if (!isLove) {
-//                    news.setIsLike("ture");
-//                    dbEngine.updateNews(news);
                     btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_24);
-//                    Log.e("lance", "onClick: " + dbEngine.getNewsByNewsID(detailNewsID));
                 }
                 if (isLove) {
-//                    news.setIsLike("false");
-//                    dbEngine.updateNews(news);
                     btn_isLove.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                 }
                 isLove = !isLove;
@@ -315,44 +320,35 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
         }
+//        viewPager2.setUserInputEnabled(true);
+//        btn_up.setVisibility(View.VISIBLE);
+//        btn_down.setVisibility(View.VISIBLE);
+//        btns_bottom_detail.setVisibility(View.VISIBLE);
+//        viewPager2.setUserInputEnabled(false);
+//        btn_up.setVisibility(View.GONE);
+//        btn_down.setVisibility(View.GONE);
+//        btns_bottom_detail.setVisibility(View.GONE);
     }
 
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        float x1 = 0;
-        float x2 = 0;
-        float y1 = 0;
-        float y2 = 0;
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-            x1 = motionEvent.getX();
-            y1 = motionEvent.getY();
-        }
-        if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-            x2 = motionEvent.getX();
-            y2 = motionEvent.getY();
-        }
-        if (x1 - x2 > 50) {
-            Toast.makeText(this,"left",Toast.LENGTH_LONG).show();
-            viewPager2.setUserInputEnabled(true);
-            btn_up.setVisibility(View.VISIBLE);
-            btn_down.setVisibility(View.VISIBLE);
-            btns_bottom_detail.setVisibility(View.VISIBLE);
-        }
-        if (x2 - x1 > 50) {
-            Toast.makeText(this,"right",Toast.LENGTH_LONG).show();
-            viewPager2.setUserInputEnabled(false);
-            btn_up.setVisibility(View.GONE);
-            btn_down.setVisibility(View.GONE);
-            btns_bottom_detail.setVisibility(View.GONE);
-        }
-        if (canDropLoad) {
-            if (y2 - y1 > 50) {
-                loadFragments();
-                Toast.makeText(this,"downLoad",Toast.LENGTH_LONG).show();
-            }
-        }
 
-        return true;
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (myApplication.getCanDropLoad()) {
+            int position = currentFragmentPosition;
+            Log.e("lance", "dispatchTouchEvent: " + myApplication.getCanDropLoad());
+            for (int i = 0; i < 20; i++) {
+                news.addAll(getNews());
+                if (news.size() >=6) {
+                    break;
+                }
+            }
+            myApplication.setNews(news);
+            detailContentFragmentList.clear();
+            loadFragments();
+            viewPager2.setCurrentItem(position + 1);
+        }
+        myApplication.setCanDropLoad(false);
+        return super.dispatchTouchEvent(ev);
     }
 }
 
