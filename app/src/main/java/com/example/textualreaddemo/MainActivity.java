@@ -2,15 +2,19 @@ package com.example.textualreaddemo;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.textualreaddemo.homepage.INewsListView;
 import com.example.textualreaddemo.homepage.MainViewAdapter;
 import com.example.textualreaddemo.homepage.NewsListPageFragment;
+import com.example.textualreaddemo.homepage.model.CallBack;
 import com.example.textualreaddemo.homepage.mypage.MyPageFragment;
+import com.example.textualreaddemo.homepage.presenter.NewsListViewPresenter;
 import com.example.textualreaddemo.homepage.searchpage.SearchPageFragment;
 import com.example.textualreaddemo.service.UpdateNewsService;
 
@@ -20,10 +24,11 @@ import com.example.textualreaddemo.service.UpdateNewsService;
  * author: houdeng
  */
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements INewsListView {
 
     private ViewPager2 mainView;
     private MainViewAdapter adapter;
+    private NewsListViewPresenter newsListViewPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,9 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainView = findViewById(R.id.main_view_container);
+
+        newsListViewPresenter = new NewsListViewPresenter(this);
+        newsListViewPresenter.getNewsListData(this);
 
         // 给viewpager2控件设置适配器
         setViewPager2Adapter();
@@ -58,4 +66,18 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    @Override
+    public void showProgress() {
+
+    }
+
+    @Override
+    public void hideProgress() {
+
+    }
+
+    @Override
+    public void getDataSuccess() {
+
+    }
 }

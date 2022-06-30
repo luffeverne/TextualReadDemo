@@ -72,7 +72,11 @@ public class ConcernedNewsListFragment extends Fragment {
      */
     private void setDataList(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        newsDataList = NewsDataUtility.handleNewsListResponse(sp.getString("NewsList",null)).getData();
+        if(sp.getString("NewsList",null) != null){
+            newsDataList = NewsDataUtility.handleNewsListResponse(sp.getString("NewsList",null)).getData();
+        }else {
+            newsDataList = null;
+        }
     }
 
 }
